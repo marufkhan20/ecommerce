@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply text-secondary overflow-x-hidden bg-[#F5F7FA];
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply text-black font-medium;
+}
+
+.category-item:hover button {
+  @apply bg-primary text-white;
+}
+
+.product-item:hover {
+  box-shadow: 0 1px 15px rgba(0, 0, 0, 0.07);
+}
+
+.product-item:hover .product-item-opt {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.menu:hover ul {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.menu ul {
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 0 20px !important;
+  }
+}
