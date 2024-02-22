@@ -1,6 +1,7 @@
 "use client";
 import { menus } from "@/constants";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { FaAngleDown, FaBars } from "react-icons/fa6";
 import { GrClose } from "react-icons/gr";
@@ -9,8 +10,13 @@ import MobileNav from "./MobileNav";
 const Header = () => {
   const [openNav, setOpenNav] = useState(false);
   const [searchBar, setSearchBar] = useState(false);
+  const pathname = usePathname();
   return (
-    <header className="absolute top-0 left-0 right-0 w-full z-40 py-8">
+    <header
+      className={`${
+        pathname === "/" ? "absolute" : "bg-white"
+      } top-0 left-0 right-0 w-full z-40 py-8`}
+    >
       <div className="container flex items-center justify-between gap-5 flex-wrap">
         <Link href="/" className="text-primary font-bold text-2xl">
           Logo Here
