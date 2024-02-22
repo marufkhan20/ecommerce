@@ -4,14 +4,14 @@ import { FaRegStar } from "react-icons/fa6";
 import { TfiReload } from "react-icons/tfi";
 import Button from "../ui/Button";
 
-const ProductItem = () => {
+const ProductItem = ({ image }) => {
   return (
     <Link
       href="#"
       className="bg-white p-5 rounded-3xl transition-all product-item relative"
     >
       <div className="pb-5">
-        <img src="/images/products/2.png" alt="product" />
+        <img className="rounded-3xl w-full h-full" src={image} alt="product" />
       </div>
       <div className="flex flex-col items-center gap-2">
         <h5 className="transition-all hover:text-primary">Sticker</h5>

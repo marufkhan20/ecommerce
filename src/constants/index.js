@@ -43,3 +43,20 @@ export const menus = [
     href: "/contact",
   },
 ];
+
+export const feedbacks = [
+  {
+    id: 1,
+    review:
+      "“The other hand we denounce with righteou indg ation and dislike men who are so beguiled and demorali ed by the of pleasure of the moment.Dislike men who are so beguiled demoraliz worlds ed by the charms of pleasure of the moment. Lorem ipsum dolor sit”",
+    name: "Jessica Cherner",
+    position: "Senior Artist Developer",
+  },
+  {
+    id: 2,
+    review:
+      "“The other hand we denounce with righteou indg ation and dislike men who are so beguiled and demorali ed by the of pleasure of the moment. demoraliz worlds ed by the charms of pleasure of the moment. Lorem ipsum dolor sit”",
+    name: "John Doe",
+    position: "Junior Artist Developer",
+  },
+];

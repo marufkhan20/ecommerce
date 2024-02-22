@@ -1,6 +1,26 @@
+"use client";
+import { feedbacks } from "@/constants";
+import { useState } from "react";
+import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import Heading from "../shared/Heading";
 
 const FeedBacks = () => {
+  const [activeFeedback, setActiveFeedback] = useState(0);
+
+  // handle change feedback
+  const handleChangeFeedback = (navigate) => {
+    if (navigate === "left") {
+      activeFeedback !== 0
+        ? setActiveFeedback(activeFeedback - 1)
+        : setActiveFeedback(feedbacks?.length - 1);
+    }
+
+    if (navigate === "right") {
+      activeFeedback !== feedbacks?.length - 1
+        ? setActiveFeedback(activeFeedback + 1)
+        : setActiveFeedback(0);
+    }
+  };
   return (
     <section className="py-14">
       <div className="container grid md:grid-cols-2 gap-10">
@@ -20,43 +40,59 @@ const FeedBacks = () => {
             about us
           </Heading>
 
-          <div className="sm:ml-20 mt-10">
-            <p className="font-medium text-black italic text-lg">
-              “The other hand we denounce with righteou indg ation and dislike
-              men who are so beguiled and demorali ed by the of pleasure of the
-              moment.Dislike men who are so beguiled demoraliz worlds ed by the
-              charms of pleasure of the moment. Lorem ipsum dolor sit”
-            </p>
-            <div className="mt-8 flex items-center gap-3">
-              <h4 className="font-semibold text-lg">Jessica Cherner</h4>
-              <span>Senior Artist Developer</span>
+          <div className="sm:ml-20 mt-10 overflow-hidden">
+            <div>
+              <p className="font-medium text-black italic text-lg">
+                {feedbacks[activeFeedback]?.review}
+              </p>
+              <div className="mt-8 flex items-center gap-3">
+                <h4 className="font-semibold text-lg">
+                  {feedbacks[activeFeedback]?.name}
+                </h4>
+                <span>{feedbacks[activeFeedback]?.position}</span>
+              </div>
+              {/* <div className="mt-6 flex items-center gap-2">
+                <img
+                  src="/images/users/1.png"
+                  alt="user"
+                  className="w-10 h-10 rounded-full cursor-pointer"
+                />
+                <img
+                  src="/images/users/2.png"
+                  alt="user"
+                  className="w-10 h-10 rounded-full cursor-pointer"
+                />
+                <img
+                  src="/images/users/3.png"
+                  alt="user"
+                  className="w-10 h-10 rounded-full cursor-pointer"
+                />
+                <img
+                  src="/images/users/4.png"
+                  alt="user"
+                  className="w-10 h-10 rounded-full cursor-pointer"
+                />
+                <img
+                  src="/images/users/5.png"
+                  alt="user"
+                  className="w-10 h-10 rounded-full cursor-pointer"
+                />
+              </div> */}
             </div>
-            <div className="mt-6 flex items-center gap-2">
-              <img
-                src="/images/users/1.png"
-                alt="user"
-                className="w-10 h-10 rounded-full cursor-pointer"
-              />
-              <img
-                src="/images/users/2.png"
-                alt="user"
-                className="w-10 h-10 rounded-full cursor-pointer"
-              />
-              <img
-                src="/images/users/3.png"
-                alt="user"
-                className="w-10 h-10 rounded-full cursor-pointer"
-              />
-              <img
-                src="/images/users/4.png"
-                alt="user"
-                className="w-10 h-10 rounded-full cursor-pointer"
-              />
-              <img
-                src="/images/users/5.png"
-                alt="user"
-                className="w-10 h-10 rounded-full cursor-pointer"
-              />
+
+            <div className="mt-10 flex items-center gap-5">
+              <button
+                className="w-10 h-10 rounded-full flex items-center justify-center bg-black text-white cursor-pointer transition-all hover:bg-primary"
+                onClick={() => handleChangeFeedback("left")}
+              >
+                <FaAngleLeft />
+              </button>
+              <button
+                className="w-10 h-10 rounded-full flex items-center justify-center bg-black text-white cursor-pointer transition-all hover:bg-primary"
+                onClick={() => handleChangeFeedback("right")}
+              >
+                <FaAngleRight />
+              </button>
             </div>
           </div>
         </div>
