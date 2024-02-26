@@ -1,22 +1,51 @@
 "use client";
-import { useState } from "react";
+import { toPng } from "html-to-image";
+import { useRef, useState } from "react";
+import Draggable from "react-draggable";
 import { FaRegStar, FaStar } from "react-icons/fa";
 import { FiUploadCloud } from "react-icons/fi";
 import Button from "../ui/Button";
 import Reviews from "./reviews";
 
 const ProductDetails = () => {
+  const divRef = useRef(null);
   const [activeTab, setActiveTab] = useState(1);
-  const [image, setImage] = useState("");
+  const [brandImage, setBrandImage] = useState("");
+  const [brandImageName, setBrandImageName] = useState("");
+  const [brandImageWidth, setBrandImageWidth] = useState("");
+  const [brandImageHeight, setBrandImageHeight] = useState("");
   const [brandText, setBrandText] = useState("");
+  const [brandFont, setBrandFont] = useState("");
+  const [brandTextWeight, setBrandTextWeight] = useState("");
+  const [brandTextSize, setBrandTextSize] = useState("24");
+  const [brandFontStyle, setBrandFontStyle] = useState("not-italic");
+  const [brandTextColor, setBrandTextColor] = useState("");
+
+  const handleDownload = () => {
+    if (divRef.current) {
+      toPng(divRef.current).then(function (dataUrl) {
+        const link = document.createElement("a");
+        link.download = "image.png";
+        link.href = dataUrl;
+        link.click();
+      });
+    }
+  };
 
   const captureImage = (e) => {
     const file = e.target.files[0];
+    setBrandImageName(file?.name);
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {
-      setImage(reader.result);
+      setBrandImage(reader.result);
     };
+  };
+
+  // removeBrandImage
+  const removeBrandImage = () => {
+    setBrandImage("");
+    setBrandImageName("");
   };
   return (
     <section className="py-24">
@@ -46,23 +75,67 @@ const ProductDetails = () => {
                 />
               </div>
             </div>
-            <div className="relative h-fit overflow-hidden">
+
+            <div ref={divRef} className="relative h-fit overflow-hidden">
               <img
-                src="https://demo2.pavothemes.com/printec/wp-content/uploads/2023/02/product_4.jpg"
+                src="/images/products/product_4.jpg"
                 alt="product"
                 className="w-full h-fit rounded-3xl"
               />
 
-              {image && (
-                <div className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] flex justify-center items-center">
-                  <img src={image} alt="brand image" />
-                </div>
+              {brandImage && (
+                <Draggable
+                  axis="both"
+                  handle=".brandLogo"
+                  defaultPosition={{ x: -200, y: 0 }}
+                  // defaultPosition={{ x: "50%", y: "50%" }}
+                  position={null}
+                  grid={[25, 25]}
+                  scale={1}
+                >
+                  <div className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] flex justify-center items-center p-5 w-full h-full">
+                    <div className="brandLogo w-full h-full">
+                      <img
+                        className="cursor-pointer"
+                        src={brandImage}
+                        alt="brand image"
+                        style={
+                          brandImageHeight || brandImageWidth
+                            ? {
+                                width: `${
+                                  brandImageWidth || brandImageHeight
+                                }px`,
+                                height: `${
+                                  brandImageHeight || brandImageWidth
+                                }px`,
+                              }
+                            : {}
+                        }
+                      />
+                    </div>
+                  </div>
+                </Draggable>
               )}
 
               {brandText && (
-                <div className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] flex justify-center items-center text-center w-full">
-                  <h2 className="text-2xl">{brandText}</h2>
-                </div>
+                <Draggable
+                  axis="both"
+                  handle=".handle"
+                  defaultPosition={{ x: -500, y: 0 }}
+                  // defaultPosition={{ x: "50%", y: "50%" }}
+                  position={null}
+                  grid={[25, 25]}
+                  scale={1}
+                >
+                  <div className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] flex justify-center items-center text-center w-full p-5">
+                    <h2
+                      className={`handle ${brandTextSize} ${brandFont} ${brandTextWeight} ${brandFontStyle} cursor-pointer`}
+                      style={brandTextColor ? { color: brandTextColor } : {}}
+                    >
+                      {brandText}
+                    </h2>
+                  </div>
+                </Draggable>
               )}
             </div>
           </div>
@@ -133,28 +206,84 @@ const ProductDetails = () => {
                 Necessitatibus quibusdam est autem quis nisi.
               </p>
 
-              <h4 className="text-base mt-10">Upload Designs</h4>
+              {/* upload custom design */}
+              <div>
+                <h4 className="text-base mt-10">Upload Designs</h4>
 
-              <div className="p-5 border-2 border-dashed mt-5 flex items-center justify-center flex-wrap gap-4 rounded-3xl">
-                <FiUploadCloud className="text-2xl" />
-                <span className="text-black font-medium">
-                  Drag & Drop Files Here
-                </span>
-                <span>or</span>
-                <label
-                  className="font-bold text-sm py-2 px-6 rounded-full transition-all cursor-pointer bg-black text-white hover:bg-primary"
-                  htmlFor="logo"
-                >
-                  Browse Files
-                </label>
-                <input
-                  onChange={captureImage}
-                  type="file"
-                  id="logo"
-                  className="hidden"
-                />
+                <div className="p-5 border-2 border-dashed mt-5 flex items-center justify-center flex-wrap gap-4 rounded-3xl">
+                  <FiUploadCloud className="text-2xl" />
+                  <span className="text-black font-medium">
+                    Drag & Drop Files Here
+                  </span>
+                  <span>or</span>
+                  <label
+                    className="font-bold text-sm py-2 px-6 rounded-full transition-all cursor-pointer bg-black text-white hover:bg-primary"
+                    htmlFor="logo"
+                  >
+                    Browse Files
+                  </label>
+                  <input
+                    onChange={captureImage}
+                    type="file"
+                    id="logo"
+                    className="hidden"
+                  />
+                </div>
+
+                {brandImageName && (
+                  <div className="mt-5 flex items-center gap-3">
+                    <span className="text-black font-medium">
+                      {brandImageName}
+                    </span>
+                    <Button
+                      onClick={removeBrandImage}
+                      className="text-sm py-2 px-6"
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                )}
               </div>
 
+              {/* custom design style */}
+              {brandImage && (
+                <div className="mt-10 grid grid-cols-2 gap-8">
+                  <div>
+                    <label
+                      htmlFor="brand-image-width"
+                      className="text-base mb-2 inline-block font-medium text-black"
+                    >
+                      Width
+                    </label>
+                    <input
+                      type="number"
+                      className="w-full border rounded-3xl bg-transparent outline-none p-5"
+                      id="brand-name"
+                      placeholder="Enter Width"
+                      value={brandImageWidth}
+                      onChange={(e) => setBrandImageWidth(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="brand-image-height"
+                      className="text-base mb-2 inline-block font-medium text-black"
+                    >
+                      Height
+                    </label>
+                    <input
+                      type="number"
+                      className="w-full border rounded-3xl bg-transparent outline-none p-5"
+                      id="brand-name"
+                      placeholder="Enter Height"
+                      value={brandImageHeight}
+                      onChange={(e) => setBrandImageHeight(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* custom text */}
               <div>
                 <label
                   htmlFor="brand-name"
@@ -172,6 +301,121 @@ const ProductDetails = () => {
                 />
               </div>
 
+              {/* text styles */}
+              {brandText && (
+                <div className="mt-10 grid grid-cols-2 gap-8">
+                  <div>
+                    <label
+                      htmlFor="brand-size"
+                      className="text-base mb-2 inline-block font-medium text-black"
+                    >
+                      Font Size
+                    </label>
+                    <select
+                      className="w-full border rounded-3xl bg-transparent outline-none p-5"
+                      id="brand-name"
+                      value={brandTextSize}
+                      onChange={(e) => setBrandTextSize(e.target.value)}
+                    >
+                      <option value="">Select Font Size</option>
+                      <option value="text-xs">12</option>
+                      <option value="text-sm">14</option>
+                      <option value="text-base">16</option>
+                      <option value="text-lg">18</option>
+                      <option value="text-xl">20</option>
+                      <option value="text-2xl">24</option>
+                      <option value="text-3xl">30</option>
+                      <option value="text-4xl">36</option>
+                      <option value="text-5xl">48</option>
+                      <option value="text-6xl">60</option>
+                      <option value="text-7xl">72</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="brand-name"
+                      className="text-base mb-2 inline-block font-medium text-black"
+                    >
+                      Select Font Style
+                    </label>
+                    <select
+                      className="w-full border rounded-3xl bg-transparent outline-none p-5"
+                      id="brand-name"
+                      value={brandFontStyle}
+                      onChange={(e) => setBrandFontStyle(e.target.value)}
+                    >
+                      <option value="">Select Font Style</option>
+                      <option value="italic" className="italic">
+                        Italic
+                      </option>
+                      <option value="not-italic">Normal</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="brand-name"
+                      className="text-base mb-2 inline-block font-medium text-black"
+                    >
+                      Select Font
+                    </label>
+                    <select
+                      className="w-full border rounded-3xl bg-transparent outline-none p-5"
+                      id="brand-name"
+                      value={brandFont}
+                      onChange={(e) => setBrandFont(e.target.value)}
+                    >
+                      <option value="">Select Font</option>
+                      <option value="font-poppins">Poppins</option>
+                      <option value="font-roboto">Roboto</option>
+                      <option value="font-oswald">Oswald</option>
+                      <option value="font-dancing-script">
+                        Dancing Script
+                      </option>
+                    </select>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="brand-name"
+                      className="text-base mb-2 inline-block font-medium text-black"
+                    >
+                      Select Font Weight
+                    </label>
+                    <select
+                      className="w-full border rounded-3xl bg-transparent outline-none p-5"
+                      id="brand-name"
+                      value={brandTextWeight}
+                      onChange={(e) => setBrandTextWeight(e.target.value)}
+                    >
+                      <option value="">Select Font Weight</option>
+                      <option value="font-[200]">200</option>
+                      <option value="font-[300]">300</option>
+                      <option value="font-[400]">400</option>
+                      <option value="font-[500]">500</option>
+                      <option value="font-[600]">600</option>
+                      <option value="font-[700]">700</option>
+                      <option value="font-[800]">800</option>
+                      <option value="font-[900]">900</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="brand-color"
+                      className="text-base mb-2 inline-block font-medium text-black"
+                    >
+                      Select Color
+                    </label>
+                    <input
+                      type="color"
+                      className="w-full border rounded-3xl outline-none"
+                      id="brand-name"
+                      value={brandTextColor}
+                      onChange={(e) => setBrandTextColor(e.target.value)}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* add to cart */}
               <div className="mt-5 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2 bg-[#EDEEF1]  p-3 rounded-full">
                   <div className="w-7 h-7 rounded-full flex items-center justify-center cursor-pointer transition-all hover:bg-white">
@@ -187,7 +431,11 @@ const ProductDetails = () => {
                   </div>
                 </div>
 
-                <Button variant="dark" className="w-full">
+                <Button
+                  onClick={handleDownload}
+                  variant="dark"
+                  className="w-full"
+                >
                   Add to cart
                 </Button>
               </div>
