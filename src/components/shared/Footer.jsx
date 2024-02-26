@@ -1,28 +1,23 @@
+import Button from "../ui/Button";
+
 const Footer = () => {
   return (
-    <footer className="py-9 bg-[#2D3759] text-white">
-      <div className="container flex items-center gap-5 justify-between flex-wrap">
-        <p>Copyright © 2023 Company Name. All rights reserved</p>
-        {/* <div className="flex items-center gap-3">
+    <footer className="bg-[#2D3759] text-white">
+      <div className="container">
+        <div className="py-14 flex-col sm:flex-row border-b border-gray-600 flex items-center justify-between gap-8">
+          <input
+            type="email"
+            placeholder="Your Email"
+            className="w-full px-7 py-5 bg-white rounded-full outline-none text-secondary"
+          />
           <div>
-            <img src="/images/icons/payment.png" alt="payment" />
+            <Button className="py-5">Subscribe</Button>
           </div>
-          <div>
-            <img src="/images/icons/payment-2.png" alt="payment" />
-          </div>
-          <div>
-            <img src="/images/icons/payment-3.png" alt="payment" />
-          </div>
-          <div>
-            <img src="/images/icons/payment-4.png" alt="payment" />
-          </div>
-          <div>
-            <img src="/images/icons/payment-5.png" alt="payment" />
-          </div>
-          <div>
-            <img src="/images/icons/payment-6.png" alt="payment" />
-          </div>
-        </div> */}
+        </div>
+
+        <div className="py-9 flex items-center gap-5 justify-between flex-wrap">
+          <p>Copyright © 2023 Company Name. All rights reserved</p>
+        </div>
       </div>
     </footer>
   );
