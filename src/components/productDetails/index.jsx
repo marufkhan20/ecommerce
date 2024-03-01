@@ -7,19 +7,21 @@ import { FiUploadCloud } from "react-icons/fi";
 import Button from "../ui/Button";
 import Reviews from "./reviews";
 
+import "react-resizable/css/styles.css";
+import EditImage from "./EditImage";
+
 const ProductDetails = () => {
   const divRef = useRef(null);
   const [activeTab, setActiveTab] = useState(1);
   const [brandImage, setBrandImage] = useState("");
   const [brandImageName, setBrandImageName] = useState("");
-  const [brandImageWidth, setBrandImageWidth] = useState("");
-  const [brandImageHeight, setBrandImageHeight] = useState("");
   const [brandText, setBrandText] = useState("");
   const [brandFont, setBrandFont] = useState("");
   const [brandTextWeight, setBrandTextWeight] = useState("");
   const [brandTextSize, setBrandTextSize] = useState("24");
   const [brandFontStyle, setBrandFontStyle] = useState("not-italic");
   const [brandTextColor, setBrandTextColor] = useState("");
+  const [openImageBox, setOpenImageBox] = useState(false);
 
   const handleDownload = () => {
     if (divRef.current) {
@@ -39,6 +41,7 @@ const ProductDetails = () => {
     reader.readAsDataURL(file);
     reader.onloadend = () => {
       setBrandImage(reader.result);
+      setOpenImageBox(true);
     };
   };
 
@@ -47,6 +50,10 @@ const ProductDetails = () => {
     setBrandImage("");
     setBrandImageName("");
   };
+
+  // resize brand image
+  const [size, setSize] = useState({ width: 200, height: 200 });
+
   return (
     <section className="py-24">
       <div className="container">
@@ -83,7 +90,7 @@ const ProductDetails = () => {
                 className="w-full h-fit rounded-3xl"
               />
 
-              {brandImage && (
+              {brandImage && !openImageBox && (
                 <Draggable
                   axis="both"
                   handle=".brandLogo"
@@ -96,21 +103,12 @@ const ProductDetails = () => {
                   <div className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] flex justify-center items-center p-5 w-full h-full">
                     <div className="brandLogo w-full h-full">
                       <img
-                        className="cursor-pointer"
                         src={brandImage}
-                        alt="brand image"
-                        style={
-                          brandImageHeight || brandImageWidth
-                            ? {
-                                width: `${
-                                  brandImageWidth || brandImageHeight
-                                }px`,
-                                height: `${
-                                  brandImageHeight || brandImageWidth
-                                }px`,
-                              }
-                            : {}
-                        }
+                        alt="Uploaded Image"
+                        style={{
+                          width: `${size?.width}px`,
+                          height: `${size?.height}`,
+                        }}
                       />
                     </div>
                   </div>
@@ -245,44 +243,6 @@ const ProductDetails = () => {
                 )}
               </div>
 
-              {/* custom design style */}
-              {brandImage && (
-                <div className="mt-10 grid grid-cols-2 gap-8">
-                  <div>
-                    <label
-                      htmlFor="brand-image-width"
-                      className="text-base mb-2 inline-block font-medium text-black"
-                    >
-                      Width
-                    </label>
-                    <input
-                      type="number"
-                      className="w-full border rounded-3xl bg-transparent outline-none p-5"
-                      id="brand-name"
-                      placeholder="Enter Width"
-                      value={brandImageWidth}
-                      onChange={(e) => setBrandImageWidth(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="brand-image-height"
-                      className="text-base mb-2 inline-block font-medium text-black"
-                    >
-                      Height
-                    </label>
-                    <input
-                      type="number"
-                      className="w-full border rounded-3xl bg-transparent outline-none p-5"
-                      id="brand-name"
-                      placeholder="Enter Height"
-                      value={brandImageHeight}
-                      onChange={(e) => setBrandImageHeight(e.target.value)}
-                    />
-                  </div>
-                </div>
-              )}
-
               {/* custom text */}
               <div>
                 <label
@@ -303,7 +263,7 @@ const ProductDetails = () => {
 
               {/* text styles */}
               {brandText && (
-                <div className="mt-10 grid grid-cols-2 gap-8">
+                <div className="mt-10 grid sm:grid-cols-2 gap-8">
                   <div>
                     <label
                       htmlFor="brand-size"
@@ -371,30 +331,6 @@ const ProductDetails = () => {
                       <option value="font-dancing-script">
                         Dancing Script
                       </option>
-                    </select>
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="brand-name"
-                      className="text-base mb-2 inline-block font-medium text-black"
-                    >
-                      Select Font Weight
-                    </label>
-                    <select
-                      className="w-full border rounded-3xl bg-transparent outline-none p-5"
-                      id="brand-name"
-                      value={brandTextWeight}
-                      onChange={(e) => setBrandTextWeight(e.target.value)}
-                    >
-                      <option value="">Select Font Weight</option>
-                      <option value="font-[200]">200</option>
-                      <option value="font-[300]">300</option>
-                      <option value="font-[400]">400</option>
-                      <option value="font-[500]">500</option>
-                      <option value="font-[600]">600</option>
-                      <option value="font-[700]">700</option>
-                      <option value="font-[800]">800</option>
-                      <option value="font-[900]">900</option>
                     </select>
                   </div>
                   <div>
@@ -487,6 +423,15 @@ const ProductDetails = () => {
           {activeTab === 2 && <Reviews />}
         </div>
       </div>
+
+      {/* editable image box */}
+      <EditImage
+        open={openImageBox}
+        setOpen={setOpenImageBox}
+        brandImage={brandImage}
+        size={size}
+        setSize={setSize}
+      />
     </section>
   );
 };

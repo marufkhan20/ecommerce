@@ -24,7 +24,7 @@ const FeedBacks = () => {
   return (
     <section className="py-14">
       <div className="container grid md:grid-cols-2 gap-10">
-        <div className="hidden md:block">
+        <div className="hidden w-[70%] md:block">
           <img src="/images/feedback.png" alt="" />
         </div>
         <div>
