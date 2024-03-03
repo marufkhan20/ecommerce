@@ -7,10 +7,12 @@ import { FiUploadCloud } from "react-icons/fi";
 import Button from "../ui/Button";
 import Reviews from "./reviews";
 
+import { product } from "@/constants";
 import "react-resizable/css/styles.css";
 import EditImage from "./EditImage";
 
 const ProductDetails = () => {
+  const [activeProductImage, setActiveProductImage] = useState(0);
   const divRef = useRef(null);
   const [activeTab, setActiveTab] = useState(1);
   const [brandImage, setBrandImage] = useState("");
@@ -22,6 +24,8 @@ const ProductDetails = () => {
   const [brandFontStyle, setBrandFontStyle] = useState("not-italic");
   const [brandTextColor, setBrandTextColor] = useState("");
   const [openImageBox, setOpenImageBox] = useState(false);
+  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedColor, setSelectedColor] = useState("");
 
   const handleDownload = () => {
     if (divRef.current) {
@@ -60,32 +64,28 @@ const ProductDetails = () => {
         <div className="grid md:grid-cols-2 gap-14">
           <div className="flex gap-3">
             <div className="flex flex-col gap-3">
-              <div className="w-[100px] h-[100px] rounded-3xl overflow-hidden">
-                <img
-                  src="https://demo2.pavothemes.com/printec/wp-content/uploads/2023/02/product_4-150x150.jpg"
-                  alt="product"
-                  className="w-full h-full cursor-pointer opacity-55 transition-all hover:opacity-100"
-                />
-              </div>
-              <div className="w-[100px] h-[100px] rounded-3xl overflow-hidden">
-                <img
-                  src="https://demo2.pavothemes.com/printec/wp-content/uploads/2023/02/product_7_1-150x150.jpg"
-                  alt="product"
-                  className="w-full h-full cursor-pointer opacity-55 transition-all hover:opacity-100"
-                />
-              </div>
-              <div className="w-[100px] h-[100px] rounded-3xl overflow-hidden">
-                <img
-                  src="https://demo2.pavothemes.com/printec/wp-content/uploads/2023/02/product_7-150x150.jpg"
-                  alt="product"
-                  className="w-full h-full cursor-pointer opacity-55 transition-all hover:opacity-100"
-                />
-              </div>
+              {product?.productImages?.map((productImage, idx) => (
+                <div
+                  key={productImage}
+                  className="w-[100px] h-[100px] rounded-3xl overflow-hidden"
+                  onClick={() => setActiveProductImage(idx)}
+                >
+                  <img
+                    src={productImage}
+                    alt="product"
+                    className={`w-full h-full transition-all ${
+                      activeProductImage === idx
+                        ? "opacity-100"
+                        : "opacity-55 cursor-pointer hover:opacity-100"
+                    }`}
+                  />
+                </div>
+              ))}
             </div>
 
             <div ref={divRef} className="relative h-fit overflow-hidden">
               <img
-                src="/images/products/product_4.jpg"
+                src={product?.productImages[activeProductImage]}
                 alt="product"
                 className="w-full h-fit rounded-3xl"
               />
@@ -166,16 +166,44 @@ const ProductDetails = () => {
               <div>
                 <h4 className="text-base mt-5">Size</h4>
                 <div className="flex items-center flex-wrap gap-4 mt-2">
-                  <button className="py-2 px-4 rounded-full border transition-all hover:bg-black hover:text-white hover:border-black">
+                  <button
+                    className={`py-2 px-4 rounded-full border transition-all ${
+                      selectedSize === "s"
+                        ? "text-white bg-black border-black"
+                        : "hover:text-white hover:border-black hover:bg-black"
+                    }`}
+                    onClick={() => setSelectedSize("s")}
+                  >
                     S
                   </button>
-                  <button className="py-2 px-4 rounded-full border transition-all hover:bg-black hover:text-white hover:border-black">
+                  <button
+                    className={`py-2 px-4 rounded-full border transition-all ${
+                      selectedSize === "m"
+                        ? "text-white bg-black border-black"
+                        : "hover:text-white hover:border-black hover:bg-black"
+                    }`}
+                    onClick={() => setSelectedSize("m")}
+                  >
                     M
                   </button>
-                  <button className="py-2 px-4 rounded-full border transition-all hover:bg-black hover:text-white hover:border-black">
+                  <button
+                    className={`py-2 px-4 rounded-full border transition-all ${
+                      selectedSize === "l"
+                        ? "text-white bg-black border-black"
+                        : "hover:text-white hover:border-black hover:bg-black"
+                    }`}
+                    onClick={() => setSelectedSize("l")}
+                  >
                     L
                   </button>
-                  <button className="py-2 px-4 rounded-full border transition-all hover:bg-black hover:text-white hover:border-black">
+                  <button
+                    className={`py-2 px-4 rounded-full border transition-all ${
+                      selectedSize === "xl"
+                        ? "text-white bg-black border-black"
+                        : "hover:text-white hover:border-black hover:bg-black"
+                    }`}
+                    onClick={() => setSelectedSize("xl")}
+                  >
                     XL
                   </button>
                 </div>
@@ -183,16 +211,44 @@ const ProductDetails = () => {
 
               <h4 className="text-base mt-5">Colors</h4>
               <div className="flex items-center flex-wrap gap-4 mt-2">
-                <button className="py-2 px-4 rounded-full border transition-all hover:bg-black hover:text-white hover:border-black">
+                <button
+                  className={`py-2 px-4 rounded-full border transition-all ${
+                    selectedColor === "red"
+                      ? "bg-black border-black text-white"
+                      : "hover:bg-black hover:text-white hover:border-black"
+                  }`}
+                  onClick={() => setSelectedColor("red")}
+                >
                   Red
                 </button>
-                <button className="py-2 px-4 rounded-full border transition-all hover:bg-black hover:text-white hover:border-black">
+                <button
+                  className={`py-2 px-4 rounded-full border transition-all ${
+                    selectedColor === "green"
+                      ? "bg-black border-black text-white"
+                      : "hover:bg-black hover:text-white hover:border-black"
+                  }`}
+                  onClick={() => setSelectedColor("green")}
+                >
                   Green
                 </button>
-                <button className="py-2 px-4 rounded-full border transition-all hover:bg-black hover:text-white hover:border-black">
+                <button
+                  className={`py-2 px-4 rounded-full border transition-all ${
+                    selectedColor === "blue"
+                      ? "bg-black border-black text-white"
+                      : "hover:bg-black hover:text-white hover:border-black"
+                  }`}
+                  onClick={() => setSelectedColor("blue")}
+                >
                   Blue
                 </button>
-                <button className="py-2 px-4 rounded-full border transition-all hover:bg-black hover:text-white hover:border-black">
+                <button
+                  className={`py-2 px-4 rounded-full border transition-all ${
+                    selectedColor === "yellow"
+                      ? "bg-black border-black text-white"
+                      : "hover:bg-black hover:text-white hover:border-black"
+                  }`}
+                  onClick={() => setSelectedColor("yellow")}
+                >
                   Yellow
                 </button>
               </div>

@@ -60,3 +60,11 @@ export const feedbacks = [
     position: "Junior Artist Developer",
   },
 ];
+
+export const product = {
+  productImages: [
+    "https://demo2.pavothemes.com/printec/wp-content/uploads/2023/02/product_4.jpg",
+    "https://demo2.pavothemes.com/printec/wp-content/uploads/2023/02/product_7_1.jpg",
+    "https://demo2.pavothemes.com/printec/wp-content/uploads/2023/02/product_7.jpg",
+  ],
+};
