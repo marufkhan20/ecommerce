@@ -18,9 +18,10 @@ const ProductDetails = () => {
   const [brandImage, setBrandImage] = useState("");
   const [brandImageName, setBrandImageName] = useState("");
   const [brandText, setBrandText] = useState("");
+  const [selectedOption, setSelectedOption] = useState("");
   const [brandFont, setBrandFont] = useState("");
   const [brandTextWeight, setBrandTextWeight] = useState("");
-  const [brandTextSize, setBrandTextSize] = useState("24");
+  const [brandTextSize, setBrandTextSize] = useState("text-[28px]");
   const [brandFontStyle, setBrandFontStyle] = useState("not-italic");
   const [brandTextColor, setBrandTextColor] = useState("");
   const [openImageBox, setOpenImageBox] = useState(false);
@@ -90,51 +91,60 @@ const ProductDetails = () => {
                 className="w-full h-fit rounded-3xl"
               />
 
-              {brandImage && !openImageBox && (
-                <Draggable
-                  axis="both"
-                  handle=".brandLogo"
-                  defaultPosition={{ x: -200, y: 0 }}
-                  // defaultPosition={{ x: "50%", y: "50%" }}
-                  position={null}
-                  grid={[25, 25]}
-                  scale={1}
-                >
-                  <div className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] flex justify-center items-center p-5 w-full h-full">
-                    <div className="brandLogo w-full h-full">
-                      <img
-                        src={brandImage}
-                        alt="Uploaded Image"
-                        style={{
-                          width: `${size?.width}px`,
-                          height: `${size?.height}`,
-                        }}
-                      />
-                    </div>
-                  </div>
-                </Draggable>
-              )}
-
-              {brandText && (
-                <Draggable
-                  axis="both"
-                  handle=".handle"
-                  defaultPosition={{ x: -500, y: 0 }}
-                  // defaultPosition={{ x: "50%", y: "50%" }}
-                  position={null}
-                  grid={[25, 25]}
-                  scale={1}
-                >
-                  <div className="absolute top-[50%] left-[50%] -translate-x-[50%] -translate-y-[50%] flex justify-center items-center text-center w-full p-5">
-                    <h2
-                      className={`handle ${brandTextSize} ${brandFont} ${brandTextWeight} ${brandFontStyle} cursor-pointer`}
-                      style={brandTextColor ? { color: brandTextColor } : {}}
+              <div className="absolute inset-0 w-full h-full grid grid-cols-2">
+                <div className="overflow-hidden">
+                  {(brandText || selectedOption) && (
+                    <Draggable
+                      axis="both"
+                      handle=".handle"
+                      // defaultPosition={{ x: , y: 0 }}
+                      // defaultPosition={{ x: "50%", y: "50%" }}
+                      position={null}
+                      grid={[25, 25]}
+                      scale={1}
                     >
-                      {brandText}
-                    </h2>
-                  </div>
-                </Draggable>
-              )}
+                      <div className="flex justify-center items-center text-center w-full p-5 h-full">
+                        <h2
+                          className={`handle ${brandTextSize} ${brandFont} ${brandTextWeight} ${brandFontStyle} cursor-pointer`}
+                          style={
+                            brandTextColor ? { color: brandTextColor } : {}
+                          }
+                        >
+                          {brandText || selectedOption}
+                        </h2>
+                      </div>
+                    </Draggable>
+                  )}
+                </div>
+
+                <div className="overflow-hidden">
+                  {brandImage && !openImageBox && (
+                    <Draggable
+                      axis="both"
+                      handle=".brandLogo"
+                      // defaultPosition={{ x: -200, y: 0 }}
+                      // defaultPosition={{ x: "50%", y: "50%" }}
+                      position={null}
+                      grid={[25, 25]}
+                      scale={1}
+                    >
+                      <div className="flex justify-center items-center p-5 w-full h-full">
+                        <div className="brandLogo w-full h-full flex justify-center items-center">
+                          <img
+                            src={brandImage}
+                            alt="Uploaded Image"
+                            style={{
+                              width: `${size?.width}px`,
+                              height: `${size?.height}`,
+                            }}
+                            className="rounded-lg "
+                          />
+                        </div>
+                      </div>
+                    </Draggable>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -317,8 +327,36 @@ const ProductDetails = () => {
                 />
               </div>
 
+              <div>
+                <label
+                  htmlFor="brand-name"
+                  className="text-base mt-10 mb-2 inline-block font-medium text-black"
+                >
+                  Select option
+                </label>
+                <select
+                  name=""
+                  id=""
+                  className="w-full border rounded-3xl bg-transparent outline-none p-5"
+                  onChange={(e) => setSelectedOption(e.target.value)}
+                >
+                  <option value="">Choose an option</option>
+                  <option value="Once by my side forever in my heart">
+                    Once by my side forever in my heart
+                  </option>
+                  <option value="Best friends come into our lives and leave pawprints on our hearts">
+                    Best friends come into our lives and leave pawprints on our
+                    hearts
+                  </option>
+                  <option value="If love alone could have kept you here, you would have lived forever">
+                    If love alone could have kept you here, you would have lived
+                    forever
+                  </option>
+                </select>
+              </div>
+
               {/* text styles */}
-              {brandText && (
+              {(brandText || selectedOption) && (
                 <div className="mt-10 grid sm:grid-cols-2 gap-8">
                   <div>
                     <label
