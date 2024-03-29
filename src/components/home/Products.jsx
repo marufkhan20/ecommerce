@@ -1,7 +1,19 @@
+"use client";
+import { getProducts } from "@/http/api";
+import { useQuery } from "@tanstack/react-query";
 import Heading from "../shared/Heading";
 import ProductItem from "../shared/ProductItem";
 
 const Products = () => {
+  const { data: products, isPending } = useQuery({
+    queryKey: ["products"],
+    queryFn: async () => {
+      const { data } = await getProducts();
+      return data;
+    },
+  });
+
+  console.log("products", products);
   return (
     <section className="py-14">
       <div className="container">
