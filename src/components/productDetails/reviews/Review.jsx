@@ -5,7 +5,7 @@ const Review = ({ review }) => {
   const ratings = [];
 
   for (let i = 0; i < 5; i++) {
-    if (i < String(review?.rating)?.length) {
+    if (i < Number(review?.rating)) {
       ratings.push(<FaStar className="text-[#F7AC2D]" />);
     } else {
       ratings.push(<FaRegStar />);
