@@ -1,9 +1,10 @@
 "use client";
+import { API_BASE_URL } from "@/config";
 import { product } from "@/constants";
 import { useState } from "react";
 import { GoChevronLeft, GoChevronRight } from "react-icons/go";
 
-const ViewProductImages = ({ viewImages, setViewImages }) => {
+const ViewProductImages = ({ viewImages, setViewImages, images }) => {
   const [activeImage, setActiveImage] = useState(0);
   return (
     <div
@@ -26,14 +27,16 @@ const ViewProductImages = ({ viewImages, setViewImages }) => {
         onClick={(e) => e.stopPropagation()}
         className="w-full md:w-[800px] bg-white rounded-2xl p-5 sm:p-10"
       >
-        <img src={product?.productImages[activeImage]} alt="product image" />
+        <img
+          src={`${API_BASE_URL}/${images[activeImage]?.image}`}
+          alt="product image"
+        />
       </div>
       <div className="hidden sm:block" onClick={(e) => e.stopPropagation()}>
         <div
           className="w-14 bg-white h-12 flex items-center justify-center rounded-lg cursor-pointer"
           onClick={() => {
-            activeImage < product?.productImages?.length - 1 &&
-              setActiveImage(activeImage + 1);
+            activeImage < images?.length - 1 && setActiveImage(activeImage + 1);
           }}
         >
           <GoChevronRight className="text-4xl" />

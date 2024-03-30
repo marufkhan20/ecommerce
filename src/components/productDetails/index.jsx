@@ -1,18 +1,16 @@
 "use client";
 import { toPng } from "html-to-image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
 import { FaRegStar, FaStar } from "react-icons/fa";
 import { FiUploadCloud } from "react-icons/fi";
+import "react-resizable/css/styles.css";
 import Button from "../ui/Button";
+import EditImage from "./EditImage";
 import Reviews from "./reviews";
 
-import { product } from "@/constants";
-import "react-resizable/css/styles.css";
-import EditImage from "./EditImage";
-
-const ProductDetails = () => {
-  const [activeProductImage, setActiveProductImage] = useState(0);
+const ProductDetails = ({ product }) => {
+  const [activeProductImage, setActiveProductImage] = useState();
   const divRef = useRef(null);
   const [activeTab, setActiveTab] = useState(1);
   const [brandImage, setBrandImage] = useState("");
@@ -26,7 +24,23 @@ const ProductDetails = () => {
   const [brandTextColor, setBrandTextColor] = useState("");
   const [openImageBox, setOpenImageBox] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
-  const [selectedColor, setSelectedColor] = useState("");
+
+  useEffect(() => {
+    if (product?.primary_image) {
+      setActiveProductImage(product?.primary_image);
+    }
+  }, [product]);
+
+  // extract product data
+  const {
+    primary_image,
+    price,
+    title,
+    variations,
+    colored_variations,
+    reviews,
+    description,
+  } = product || {};
 
   const handleDownload = () => {
     if (divRef.current) {
@@ -58,24 +72,37 @@ const ProductDetails = () => {
 
   // resize brand image
   const [size, setSize] = useState({ width: 200, height: 200 });
-
   return (
     <section className="py-24">
       <div className="container">
         <div className="grid md:grid-cols-2 gap-14">
           <div className="flex gap-3">
             <div className="flex flex-col gap-3">
-              {product?.productImages?.map((productImage, idx) => (
+              <div
+                className="w-[100px] h-[100px] rounded-3xl overflow-hidden"
+                onClick={() => setActiveProductImage(primary_image)}
+              >
+                <img
+                  src={primary_image}
+                  alt="product"
+                  className={`w-full h-full transition-all ${
+                    activeProductImage === primary_image
+                      ? "opacity-100"
+                      : "opacity-55 cursor-pointer hover:opacity-100"
+                  }`}
+                />
+              </div>
+              {variations?.map((variation, idx) => (
                 <div
-                  key={productImage}
+                  key={variation?.id}
                   className="w-[100px] h-[100px] rounded-3xl overflow-hidden"
-                  onClick={() => setActiveProductImage(idx)}
+                  onClick={() => setActiveProductImage(variation?.image)}
                 >
                   <img
-                    src={productImage}
+                    src={variation?.image}
                     alt="product"
                     className={`w-full h-full transition-all ${
-                      activeProductImage === idx
+                      activeProductImage === variation?.image
                         ? "opacity-100"
                         : "opacity-55 cursor-pointer hover:opacity-100"
                     }`}
@@ -86,7 +113,7 @@ const ProductDetails = () => {
 
             <div ref={divRef} className="relative h-fit overflow-hidden">
               <img
-                src={product?.productImages[activeProductImage]}
+                src={activeProductImage}
                 alt="product"
                 className="w-full h-fit rounded-3xl"
               />
@@ -152,7 +179,7 @@ const ProductDetails = () => {
             <div className="pb-4 border-b">
               <h4 className="text-[#48db45] text-sm">IN STOCK</h4>
               <h2 className="font-extrabold leading-[36px] text-[36px] mt-2">
-                Plain Postal Boxes
+                {title}
               </h2>
 
               <div className="flex items-center gap-2 mt-4">
@@ -163,14 +190,17 @@ const ProductDetails = () => {
                   <FaStar className="text-[#F7AC2D]" />
                   <FaRegStar />
                 </div>
-                <span className="font-medium text-xs">(5 Reviews)</span>
+                <span className="font-medium text-xs">
+                  ({reviews?.length}{" "}
+                  {reviews?.length < 2 ? "Review" : "Reviews"})
+                </span>
               </div>
 
               <div className="flex items-end gap-2 mt-7">
                 <h2 className="text-[#e84040] text-[36px] leading-[36px] font-semibold">
-                  $7.41
+                  ${price}
                 </h2>
-                <span className="text-sm font-semibold">$9.67</span>
+                {/* <span className="text-sm font-semibold">$9.67</span> */}
               </div>
 
               <div>
@@ -221,46 +251,19 @@ const ProductDetails = () => {
 
               <h4 className="text-base mt-5">Colors</h4>
               <div className="flex items-center flex-wrap gap-4 mt-2">
-                <button
-                  className={`py-2 px-4 rounded-full border transition-all ${
-                    selectedColor === "red"
-                      ? "bg-black border-black text-white"
-                      : "hover:bg-black hover:text-white hover:border-black"
-                  }`}
-                  onClick={() => setSelectedColor("red")}
-                >
-                  Red
-                </button>
-                <button
-                  className={`py-2 px-4 rounded-full border transition-all ${
-                    selectedColor === "green"
-                      ? "bg-black border-black text-white"
-                      : "hover:bg-black hover:text-white hover:border-black"
-                  }`}
-                  onClick={() => setSelectedColor("green")}
-                >
-                  Green
-                </button>
-                <button
-                  className={`py-2 px-4 rounded-full border transition-all ${
-                    selectedColor === "blue"
-                      ? "bg-black border-black text-white"
-                      : "hover:bg-black hover:text-white hover:border-black"
-                  }`}
-                  onClick={() => setSelectedColor("blue")}
-                >
-                  Blue
-                </button>
-                <button
-                  className={`py-2 px-4 rounded-full border transition-all ${
-                    selectedColor === "yellow"
-                      ? "bg-black border-black text-white"
-                      : "hover:bg-black hover:text-white hover:border-black"
-                  }`}
-                  onClick={() => setSelectedColor("yellow")}
-                >
-                  Yellow
-                </button>
+                {colored_variations?.map((item) => (
+                  <button
+                    key={item?.id}
+                    className={`py-2 px-4 rounded-full border transition-all ${
+                      activeProductImage === item?.image
+                        ? "bg-black border-black text-white"
+                        : "hover:bg-black hover:text-white hover:border-black"
+                    }`}
+                    onClick={() => setActiveProductImage(item?.image)}
+                  >
+                    {item?.name}
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -356,7 +359,7 @@ const ProductDetails = () => {
               </div>
 
               {/* text styles */}
-              {(brandText || selectedOption) && (
+              {/* {(brandText || selectedOption) && (
                 <div className="mt-10 grid sm:grid-cols-2 gap-8">
                   <div>
                     <label
@@ -443,7 +446,7 @@ const ProductDetails = () => {
                     />
                   </div>
                 </div>
-              )}
+              )} */}
 
               {/* add to cart */}
               <div className="mt-5 flex items-center justify-between gap-3">
@@ -493,28 +496,18 @@ const ProductDetails = () => {
             }`}
             onClick={() => setActiveTab(2)}
           >
-            Reviews (5)
+            Reviews ({reviews?.length})
           </h2>
         </div>
 
         <div className="mt-8 pb-20 border-b">
           {activeTab === 1 && (
             <>
-              <p>
-                Debitis illum id dolorum provident asperiores velit nobis.
-                Provident a in quis autem. Blanditiis pariatur minus animi
-                ducimus totam autem expedita exercitationem.
-              </p>
-              <p className="mt-2">
-                Totam rerum qui laborum consequatur atque quae sunt.
-                Necessitatibus libero id sit quia libero ex animi. Ullam quasi
-                animi facilis nostrum vel. Qui magni sed voluptas minus esse
-                voluptas.
-              </p>
+              <p>{description}</p>
             </>
           )}
 
-          {activeTab === 2 && <Reviews />}
+          {activeTab === 2 && <Reviews title={title} reviews={reviews} />}
         </div>
       </div>
 

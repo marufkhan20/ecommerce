@@ -7,13 +7,15 @@ import { TfiReload } from "react-icons/tfi";
 import Button from "../../ui/Button";
 import ViewProductImages from "./ViewProductImages";
 
-const ProductItem = ({ image }) => {
+const ProductItem = ({ product }) => {
+  const { id, price, title, primary_image: image, variations } = product || {};
+
   const [viewImages, setViewImages] = useState(false);
   return (
     <>
       <div className="bg-white p-5 rounded-3xl transition-all product-item relative">
         <div className="pb-5">
-          <Link href="/products/single-product">
+          <Link href={`/products/${id}`}>
             <img
               className="rounded-3xl w-full h-full"
               src={image}
@@ -23,11 +25,11 @@ const ProductItem = ({ image }) => {
         </div>
         <div className="flex flex-col items-center gap-2">
           <Link href="/products/single-product">
-            <h5 className="transition-all hover:text-primary">Sticker</h5>
+            <h5 className="transition-all hover:text-primary">{title}</h5>
           </Link>
-          <h4 className="text-lg font-semibold">$9.50 - $39.95</h4>
+          <h4 className="text-lg font-semibold">${price}</h4>
           <div className="mt-7 w-full">
-            <Link href="/products/single-product">
+            <Link href={`/products/${id}`}>
               <Button className="w-full" variant="dark">
                 View Product
               </Button>
@@ -55,6 +57,7 @@ const ProductItem = ({ image }) => {
       <ViewProductImages
         viewImages={viewImages}
         setViewImages={setViewImages}
+        images={variations || []}
       />
     </>
   );
