@@ -8,7 +8,7 @@ const DashboardLayout = ({ children }) => {
   const [openSidebar, setOpenSidebar] = useState(false);
   return (
     <PrivateRoute>
-      <main className="flex justify-between gap-8 bg-white">
+      <main className="flex justify-between gap-8 pb-10 min-h-full bg-white">
         <Sidebar openSidebar={openSidebar} setOpenSidebar={setOpenSidebar} />
         <div className="min-h-screen pl-8 lg:p-0 w-custom-full">
           <Header setOpenSidebar={setOpenSidebar} />
