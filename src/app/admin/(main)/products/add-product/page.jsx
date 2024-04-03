@@ -35,6 +35,18 @@ const AddProduct = () => {
       imageName: "",
     },
   ]);
+  const [customizeImage, setCustomizeImage] = useState({
+    left: 1,
+    right: 0,
+    top: 1,
+    bottom: 0,
+  });
+  const [customizeText, setCustomizeText] = useState({
+    left: 0,
+    right: 1,
+    top: 1,
+    bottom: 0,
+  });
 
   // add new color variantion
   const addNewColorVariation = () => {
@@ -128,6 +140,20 @@ const AddProduct = () => {
 
     setQuotes(updatedQuotes);
   };
+
+  // change customize image
+  const changeCustomizeImage = (name, value) => {
+    const updated = customizeImage;
+    updated[name] = Number(value);
+    setCustomizeImage({ ...updated });
+  };
+
+  // change customize text
+  const changeCustomizeText = (name, value) => {
+    const updated = customizeText;
+    updated[name] = Number(value);
+    setCustomizeText({ ...updated });
+  };
   return (
     <>
       <BreadCumb title="Add New Product" page="Add Product" />
@@ -206,6 +232,160 @@ const AddProduct = () => {
               </div>
             </div>
           </div>
+
+          {/* customization settings */}
+          {primaryImage?.image && (
+            <div>
+              <h3 className="my-3 mt-5 text-lg border p-3 rounded-lg">
+                Customization Settings
+              </h3>
+
+              <div className="mb-4 relative w-fit overflow-hidden">
+                <img src={primaryImage?.image} alt="" />
+                <div
+                  className={`w-[200px] absolute z-40`}
+                  style={{
+                    top: customizeImage?.top ? `${customizeImage?.top}%` : "",
+                    left: customizeImage?.left
+                      ? `${customizeImage?.left}%`
+                      : "",
+                    right: customizeImage?.right
+                      ? `${customizeImage?.right}%`
+                      : "",
+                    bottom: customizeImage?.bottom
+                      ? `${customizeImage?.bottom}%`
+                      : "",
+                  }}
+                >
+                  <img src="/images/image-placeholder.png" alt="" />
+                </div>
+                <div
+                  style={{
+                    top: customizeText?.top ? `${customizeText?.top}%` : "",
+                    left: customizeText?.left ? `${customizeText?.left}%` : "",
+                    right: customizeText?.right
+                      ? `${customizeText?.right}%`
+                      : "",
+                    bottom: customizeText?.bottom
+                      ? `${customizeText?.bottom}%`
+                      : "",
+                  }}
+                  className="absolute z-40 w-[200px] bg-black h-[125px] flex items-center justify-center text-white text-xl"
+                >
+                  text
+                </div>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-5">
+                <div className="p-5 border rounded-lg">
+                  <h4 className="mb-5">Image Customize</h4>
+                  <div className="grid grid-cols-2 gap-5">
+                    <div className="flex flex-col gap-3">
+                      <Label htmlFor="image-left">Left (%)</Label>
+                      <Input
+                        value={customizeImage?.left}
+                        onChange={(e) =>
+                          changeCustomizeImage("left", e.target.value)
+                        }
+                        id="image-left"
+                        placeholder="%"
+                        type="number"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      <Label htmlFor="image-right">Right (%)</Label>
+                      <Input
+                        value={customizeImage?.right}
+                        onChange={(e) =>
+                          changeCustomizeImage("right", e.target.value)
+                        }
+                        id="image-right"
+                        type="number"
+                        placeholder="%"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      <Label htmlFor="image-top">Top (%)</Label>
+                      <Input
+                        value={customizeImage?.top}
+                        onChange={(e) =>
+                          changeCustomizeImage("top", e.target.value)
+                        }
+                        id="image-top"
+                        placeholder="%"
+                        type="number"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      <Label htmlFor="image-bottom">Bottom (%)</Label>
+                      <Input
+                        value={customizeImage?.bottom}
+                        onChange={(e) =>
+                          changeCustomizeImage("bottom", e.target.value)
+                        }
+                        id="image-bottom"
+                        type="number"
+                        placeholder="%"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-5 border rounded-lg">
+                  <h4 className="mb-5">Text Customize</h4>
+                  <div className="grid grid-cols-2 gap-5">
+                    <div className="flex flex-col gap-3">
+                      <Label htmlFor="text-left">Left (%)</Label>
+                      <Input
+                        value={customizeText?.left}
+                        onChange={(e) =>
+                          changeCustomizeText("left", e.target.value)
+                        }
+                        id="text-left"
+                        placeholder="%"
+                        type="number"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      <Label htmlFor="text-right">Right (%)</Label>
+                      <Input
+                        value={customizeText?.right}
+                        onChange={(e) =>
+                          changeCustomizeText("right", e.target.value)
+                        }
+                        id="text-right"
+                        type="number"
+                        placeholder="%"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      <Label htmlFor="text-top">Top (%)</Label>
+                      <Input
+                        value={customizeText?.top}
+                        onChange={(e) =>
+                          changeCustomizeText("top", e.target.value)
+                        }
+                        id="text-top"
+                        placeholder="%"
+                        type="number"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      <Label htmlFor="text-bottom">Bottom (%)</Label>
+                      <Input
+                        value={customizeText?.bottom}
+                        onChange={(e) =>
+                          changeCustomizeText("bottom", e.target.value)
+                        }
+                        id="text-bottom"
+                        type="number"
+                        placeholder="%"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* color variations */}
           <div>

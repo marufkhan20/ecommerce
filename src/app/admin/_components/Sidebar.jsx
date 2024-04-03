@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { BiCategoryAlt } from "react-icons/bi";
 import { BsFileEarmarkText } from "react-icons/bs";
 import { FaChevronDown } from "react-icons/fa6";
 import { FiHome } from "react-icons/fi";
@@ -18,14 +19,15 @@ const Sidebar = ({ openSidebar, setOpenSidebar }) => {
         ? setOpenMenu(1)
         : pathname?.includes("/orders")
         ? setOpenMenu(2)
+        : pathname?.includes("/categories")
+        ? setOpenMenu(4)
         : setOpenMenu("home");
 
       pathname === "/admin/products" && setOpenSubMenu(2);
       pathname === "/admin/products/add-product" && setOpenSubMenu(1);
-      // pathname === "/orders" && setOpenSubMenu(2);
-      // pathname === "/forms/credit-card/add-credit-card" && setOpenSubMenu(2);
       pathname === "/admin/orders" && setOpenSubMenu(3);
-      pathname === "/campaign/credit-card" && setOpenSubMenu(4);
+      pathname === "/admin/categories" && setOpenSubMenu(5);
+      pathname === "/admin/categories/add-category" && setOpenSubMenu(4);
     }
   }, [pathname]);
   return (
@@ -50,6 +52,7 @@ const Sidebar = ({ openSidebar, setOpenSidebar }) => {
               <span>Home</span>
             </Link>
           </li>
+
           <li className="overflow-hidden">
             <span
               className={`flex w-full items-center justify-between gap-3 px-3 py-2 rounded-[7px] transition-all cursor-pointer ${
@@ -130,6 +133,55 @@ const Sidebar = ({ openSidebar, setOpenSidebar }) => {
                 >
                   <div className="w-2 h-2 rounded-full border border-[#2a3547] box" />
                   <span>All Orders</span>
+                </Link>
+              </li>
+            </ul>
+          </li>
+
+          <li className="overflow-hidden">
+            <span
+              className={`flex w-full items-center justify-between gap-3 px-3 py-2 rounded-[7px] transition-all cursor-pointer ${
+                openMenu === 4
+                  ? "bg-primary text-white"
+                  : "hover:bg-[#ECF2FF] hover:text-primary"
+              }`}
+              onClick={() => setOpenMenu(openMenu === 4 ? false : 4)}
+            >
+              <div className="flex items-center gap-3">
+                <BiCategoryAlt className="text-lg" />
+                <span>Categories</span>
+              </div>
+              <FaChevronDown
+                className={`text-xs ${openMenu === 4 && "rotate-180"}`}
+              />
+            </span>
+            <ul
+              className={`transition-all ${openMenu === 4 ? "h-full" : "h-0"}`}
+            >
+              <li>
+                <Link
+                  href="/admin/categories"
+                  className={`flex items-center gap-3 px-5 py-3 transition-all sub-menu ${
+                    openSubMenu === 5
+                      ? "text-primary gap-5 active"
+                      : "hover:gap-5 hover:text-primary"
+                  }`}
+                >
+                  <div className="w-2 h-2 rounded-full border border-[#2a3547] box" />
+                  <span>All Category</span>
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/admin/categories/add-category"
+                  className={`flex items-center gap-3 px-5 py-3 transition-all sub-menu ${
+                    openSubMenu === 4
+                      ? "text-primary gap-5 active"
+                      : "hover:gap-5 hover:text-primary"
+                  }`}
+                >
+                  <div className="w-2 h-2 rounded-full border border-[#2a3547] box" />
+                  <span>Add Category</span>
                 </Link>
               </li>
             </ul>
