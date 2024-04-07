@@ -68,60 +68,64 @@ const Table = ({
             </span>
           ))}
 
-          {isLoading && (
+          {isLoading ? (
             <div>
               <Loading type="secondary" />
             </div>
+          ) : !totalItems ? (
+            <div className="py-4 px-4">No Items Found!</div>
+          ) : (
+            <div
+              className={`min-w-[1100px] m-5 bg-white rounded box-shadow grid ${cols} items-center`}
+            >
+              {children}
+            </div>
           )}
-
-          <div
-            className={`min-w-[1100px] m-5 bg-white rounded box-shadow grid ${cols} items-center`}
-          >
-            {children}
-          </div>
         </div>
       </div>
 
-      <div className="px-5 flex items-center justify-between gap-5 flex-wrap">
-        <p>
+      {!isLoading && totalItems !== 0 && (
+        <div className="px-5 flex items-center justify-between gap-5 flex-wrap">
+          <p>
+            {totalItems && (
+              <>
+                Showing {page * limit + 1 - limit} to{" "}
+                {page * limit > totalItems ? totalItems : page * limit} of{" "}
+                {totalItems} entries
+              </>
+            )}
+          </p>
           {totalItems && (
-            <>
-              Showing {page * limit + 1 - limit} to{" "}
-              {page * limit > totalItems ? totalItems : page * limit} of{" "}
-              {totalItems} entries
-            </>
-          )}
-        </p>
-        {totalItems && (
-          <ul className="flex items-center">
-            <li
-              className={`p-1 mr-2 rounded text-primary transition-all hover:bg-primary/30 cursor-pointer`}
-              onClick={() => (page !== 1 ? setPage(page - 1) : {})}
-            >
-              <FaAngleLeft />
-            </li>
-            {Array.from({ length: pages }, (_, idx) => (
+            <ul className="flex items-center">
               <li
-                key={idx + 1}
-                className={`p-1 px-3 rounded text-primary transition-all ${
-                  page === idx + 1
-                    ? "bg-primary/30"
-                    : "hover:bg-primary/30 cursor-pointer"
-                }`}
-                onClick={() => (page === idx + 1 ? {} : setPage(idx + 1))}
+                className={`p-1 mr-2 rounded text-primary transition-all hover:bg-primary/30 cursor-pointer`}
+                onClick={() => (page !== 1 ? setPage(page - 1) : {})}
               >
-                {idx + 1}
+                <FaAngleLeft />
               </li>
-            ))}
-            <li
-              className="p-1 rounded text-primary transition-all hover:bg-primary/30 ml-2 cursor-pointer"
-              onClick={() => (page !== pages ? setPage(page + 1) : {})}
-            >
-              <FaAngleRight />
-            </li>
-          </ul>
-        )}
-      </div>
+              {Array.from({ length: pages }, (_, idx) => (
+                <li
+                  key={idx + 1}
+                  className={`p-1 px-3 rounded text-primary transition-all ${
+                    page === idx + 1
+                      ? "bg-primary/30"
+                      : "hover:bg-primary/30 cursor-pointer"
+                  }`}
+                  onClick={() => (page === idx + 1 ? {} : setPage(idx + 1))}
+                >
+                  {idx + 1}
+                </li>
+              ))}
+              <li
+                className="p-1 rounded text-primary transition-all hover:bg-primary/30 ml-2 cursor-pointer"
+                onClick={() => (page !== pages ? setPage(page + 1) : {})}
+              >
+                <FaAngleRight />
+              </li>
+            </ul>
+          )}
+        </div>
+      )}
     </div>
   );
 };

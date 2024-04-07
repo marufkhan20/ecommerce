@@ -1,5 +1,4 @@
 "use client";
-import Uploader from "@/app/admin/_components/addProduct/Uploader";
 import BreadCumb from "@/app/admin/_components/BreadCumb";
 import Button from "@/app/admin/_components/ui/Button";
 import Error from "@/app/admin/_components/ui/Error";
@@ -11,14 +10,10 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-const AddCategory = () => {
+const EditCategory = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [errors, setErrors] = useState({});
-  const [primaryImage, setPrimaryImage] = useState({
-    image: "",
-    imageName: "",
-  });
 
   const router = useRouter();
 
@@ -29,7 +24,6 @@ const AddCategory = () => {
       const { data } = await addCategory({
         name,
         description,
-        image: primaryImage?.image,
       });
       return data;
     },
@@ -68,7 +62,7 @@ const AddCategory = () => {
         <form onSubmit={submitHandler}>
           <div>
             <div className="grid sm:grid-cols-2 gap-5">
-              <div className="flex col-span-2 flex-col gap-3">
+              <div className="flex flex-col gap-3">
                 <Label htmlFor="name">Category Name</Label>
                 <Input
                   value={name}
@@ -79,22 +73,13 @@ const AddCategory = () => {
                 <Error>{errors?.name}</Error>
               </div>
               <div className="flex flex-col gap-3">
-                <Label htmlFor="image">Category Image</Label>
-                <Uploader
-                  htmlFor="image"
-                  imageName={primaryImage?.imageName}
-                  onChange={setPrimaryImage}
-                />
-                {/* <Error>{errors?.name}</Error> */}
-              </div>
-              <div className="flex flex-col gap-3">
                 <Label htmlFor="description">Category Description</Label>
                 <textarea
                   className="text-sm w-full block outline-none p-2 rounded-[7px] focus:ring-1 ring-primary bg-transparent border"
                   name=""
                   id=""
                   cols="30"
-                  rows="8"
+                  rows="5"
                   placeholder="Enter category description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -115,4 +100,4 @@ const AddCategory = () => {
   );
 };
 
-export default AddCategory;
+export default EditCategory;

@@ -5,7 +5,7 @@ const Loading = ({ type = "", className = "" }) => {
     <div className="flex items-center justify-center w-full my-5">
       <img
         className={cn("w-16 h-16 z-50", className)}
-        src="/images/loading-secondary.gif"
+        src="/images/loading.gif"
         alt="loading"
       />
     </div>
@@ -13,7 +13,7 @@ const Loading = ({ type = "", className = "" }) => {
     <div className="flex items-center justify-center w-full">
       <img
         className={cn("w-8 h-8 z-50", className)}
-        src="/images/loading.gif"
+        src="/images/loading-light.gif"
         alt="loading"
       />
     </div>

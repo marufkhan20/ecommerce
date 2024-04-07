@@ -2,11 +2,21 @@
 import Uploader from "@/app/admin/_components/addProduct/Uploader";
 import BreadCumb from "@/app/admin/_components/BreadCumb";
 import Button from "@/app/admin/_components/ui/Button";
+import Error from "@/app/admin/_components/ui/Error";
 import Input from "@/app/admin/_components/ui/Input";
 import Label from "@/app/admin/_components/ui/Label";
+import { createProduct, getCategories } from "@/http/api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 const AddProduct = () => {
+  const [title, setTitle] = useState("");
+  const [price, setPrice] = useState("");
+  const [stock, setStock] = useState("");
+  const [description, setDescription] = useState("");
+  const [categories, setCategories] = useState([]);
   const [primaryImage, setPrimaryImage] = useState({
     image: "",
     imageName: "",
@@ -40,12 +50,30 @@ const AddProduct = () => {
     right: 0,
     top: 1,
     bottom: 0,
+    width: 40,
+    height: 40,
+    field_type: "IMGOPT",
   });
   const [customizeText, setCustomizeText] = useState({
     left: 0,
     right: 1,
     top: 1,
     bottom: 0,
+    width: 40,
+    height: 40,
+    field_type: "CHR",
+  });
+  const [errors, setErrors] = useState({});
+
+  const router = useRouter();
+
+  // get categories
+  const { data: categoriesData, isLoading } = useQuery({
+    queryKey: ["getCategories"],
+    queryFn: async () => {
+      const { data } = await getCategories();
+      return data;
+    },
   });
 
   // add new color variantion
@@ -154,12 +182,95 @@ const AddProduct = () => {
     updated[name] = Number(value);
     setCustomizeText({ ...updated });
   };
+
+  // select categories handler
+  const selectCategoriesHandler = (event) => {
+    const selectedOptions = Array.from(
+      event.target.selectedOptions,
+      (option) => option.value
+    );
+    setCategories(selectedOptions);
+  };
+
+  // create new product
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["createProduct"],
+    mutationFn: async (productDetails) => {
+      const { data } = await createProduct(productDetails);
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success("Product created successfully.");
+      router.push("/admin/products");
+    },
+  });
+
+  // submit handler
+  const submitHandler = (e) => {
+    e.preventDefault();
+
+    // check validation
+    const validationErrors = {};
+
+    if (!title) {
+      validationErrors.title = "Product title is required!";
+    }
+
+    if (!price) {
+      validationErrors.price = "Product price is required!";
+    }
+
+    if (!stock) {
+      validationErrors.stock = "Product stock is required!";
+    }
+
+    if (!description) {
+      validationErrors.description = "Product description is required!";
+    }
+
+    if (!primaryImage?.image) {
+      validationErrors.primaryImage = "Product Image is required!";
+    }
+
+    if (categories?.length === 0) {
+      validationErrors.categories = "Product category is required!";
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      return setErrors(validationErrors);
+    }
+
+    mutate({
+      title,
+      price,
+      stock,
+      description,
+      primaryImage: primaryImage?.image,
+      variations: productVariations,
+      coloredVariations: colorVariations,
+      categories,
+      customizationFields: {
+        image: customizeImage,
+        text: customizeText,
+      },
+      customizableFieldValues: [
+        {
+          fieldName: "image",
+          image: primaryImage?.image,
+        },
+        {
+          fieldName: "text",
+          image: primaryImage?.image,
+        },
+      ],
+    });
+  };
   return (
     <>
       <BreadCumb title="Add New Product" page="Add Product" />
 
       <div className="mt-7 box-shadow rounded-xl p-5">
-        <form>
+        <form onSubmit={submitHandler}>
           <h3 className="mb-3 text-lg border p-3 rounded-lg">
             Basic Information
           </h3>
@@ -168,29 +279,32 @@ const AddProduct = () => {
               <div className="flex flex-col gap-3">
                 <Label htmlFor="title">Product Title</Label>
                 <Input
-                  // onChange={(e) => setHub(e.target.value)}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
                   id="title"
                   placeholder="Enter your product title"
                 />
-                {/* <Error>{errors?.hub}</Error> */}
+                <Error>{errors?.title}</Error>
               </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="price">Product Price</Label>
                 <Input
-                  // onChange={(e) => setHub(e.target.value)}
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
                   id="price"
                   placeholder="Enter your product price"
                 />
-                {/* <Error>{errors?.hub}</Error> */}
+                <Error>{errors?.price}</Error>
               </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="stock">In Stock</Label>
                 <Input
-                  // onChange={(e) => setHub(e.target.value)}
+                  value={stock}
+                  onChange={(e) => setStock(e.target.value)}
                   id="stock"
                   placeholder="Enter your product stock"
                 />
-                {/* <Error>{errors?.hub}</Error> */}
+                <Error>{errors?.stock}</Error>
               </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="category">Category</Label>
@@ -199,14 +313,25 @@ const AddProduct = () => {
                   className="text-sm w-full block outline-none p-2 rounded-[7px] focus:ring-1 ring-primary bg-transparent border"
                   name=""
                   id="category"
+                  multiple
+                  onChange={selectCategoriesHandler}
                 >
-                  <option value="">Choose Category</option>
-                  <option value="">Shirt</option>
-                  <option value="">Jeans</option>
-                  <option value="">Jacket</option>
-                  <option value="">Accessories</option>
+                  {isLoading ? (
+                    <option>Loading...</option>
+                  ) : (
+                    <option>Choose Categories</option>
+                  )}
+                  {categoriesData?.map((category) => (
+                    <option
+                      selected={categories?.includes(category?.id)}
+                      key={category?.id}
+                      value={category?.id}
+                    >
+                      {category?.name}
+                    </option>
+                  ))}
                 </select>
-                {/* <Error>{errors?.hub}</Error> */}
+                <Error>{errors?.categories}</Error>
               </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="description">Description</Label>
@@ -218,8 +343,10 @@ const AddProduct = () => {
                   cols="30"
                   rows="10"
                   placeholder="Enter product details"
-                ></textarea>
-                {/* <Error>{errors?.hub}</Error> */}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+                <Error>{errors?.description}</Error>
               </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="primary_image">Primary Image</Label>
@@ -228,7 +355,7 @@ const AddProduct = () => {
                   onChange={setPrimaryImage}
                   htmlFor="primary_image"
                 />
-                {/* <Error>{errors?.hub}</Error> */}
+                <Error>{errors?.primaryImage}</Error>
               </div>
             </div>
           </div>
@@ -243,7 +370,7 @@ const AddProduct = () => {
               <div className="mb-4 relative w-fit overflow-hidden">
                 <img src={primaryImage?.image} alt="" />
                 <div
-                  className={`w-[200px] absolute z-40`}
+                  className={`absolute z-40`}
                   style={{
                     top: customizeImage?.top ? `${customizeImage?.top}%` : "",
                     left: customizeImage?.left
@@ -255,9 +382,15 @@ const AddProduct = () => {
                     bottom: customizeImage?.bottom
                       ? `${customizeImage?.bottom}%`
                       : "",
+                    width: `${customizeImage?.width}%`,
+                    height: `${customizeImage?.height}%`,
                   }}
                 >
-                  <img src="/images/image-placeholder.png" alt="" />
+                  <img
+                    className="w-full h-full"
+                    src="/images/image-placeholder.png"
+                    alt=""
+                  />
                 </div>
                 <div
                   style={{
@@ -269,6 +402,8 @@ const AddProduct = () => {
                     bottom: customizeText?.bottom
                       ? `${customizeText?.bottom}%`
                       : "",
+                    width: `${customizeText?.width}%`,
+                    height: `${customizeText?.height}%`,
                   }}
                   className="absolute z-40 w-[200px] bg-black h-[125px] flex items-center justify-center text-white text-xl"
                 >
@@ -328,6 +463,30 @@ const AddProduct = () => {
                         placeholder="%"
                       />
                     </div>
+                    <div className="flex flex-col gap-3">
+                      <Label htmlFor="image-width">Width (px)</Label>
+                      <Input
+                        value={customizeImage?.width}
+                        onChange={(e) =>
+                          changeCustomizeImage("width", Number(e.target.value))
+                        }
+                        id="image-width"
+                        type="number"
+                        placeholder="pixel"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      <Label htmlFor="image-height">Height (px)</Label>
+                      <Input
+                        value={customizeImage?.height}
+                        onChange={(e) =>
+                          changeCustomizeImage("height", Number(e.target.value))
+                        }
+                        id="image-height"
+                        type="number"
+                        placeholder="pixel"
+                      />
+                    </div>
                   </div>
                 </div>
                 <div className="p-5 border rounded-lg">
@@ -377,6 +536,30 @@ const AddProduct = () => {
                           changeCustomizeText("bottom", e.target.value)
                         }
                         id="text-bottom"
+                        type="number"
+                        placeholder="%"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      <Label htmlFor="text-width">Width (%)</Label>
+                      <Input
+                        value={customizeText?.width}
+                        onChange={(e) =>
+                          changeCustomizeText("width", Number(e.target.value))
+                        }
+                        id="text-width"
+                        type="number"
+                        placeholder="%"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-3">
+                      <Label htmlFor="text-height">Height (%)</Label>
+                      <Input
+                        value={customizeText?.height}
+                        onChange={(e) =>
+                          changeCustomizeText("height", Number(e.target.value))
+                        }
+                        id="text-height"
                         type="number"
                         placeholder="%"
                       />
@@ -522,7 +705,9 @@ const AddProduct = () => {
           </div>
 
           <div className="flex justify-end mt-5 gap-3">
-            <Button type="submit">Create Product</Button>
+            <Button type="submit" loading={isPending}>
+              Create Product
+            </Button>
           </div>
         </form>
       </div>

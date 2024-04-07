@@ -1,16 +1,62 @@
 "use client";
+import { deleteCategory, getCategories } from "@/http/api";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { MdDelete, MdEdit } from "react-icons/md";
 import BreadCumb from "../../_components/BreadCumb";
 import Table from "../../_components/Table";
 import Button from "../../_components/ui/Button";
+import Loading from "../../_components/ui/Loading";
 
 const Categories = () => {
   const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState("");
   const [pages, setPages] = useState(0);
   const [page, setPage] = useState(1);
+
+  // get categories
+  const {
+    data: categories,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async () => {
+      const { data } = await getCategories();
+      return data;
+    },
+  });
+
+  useEffect(() => {
+    if (categories?.length > 0) {
+      // calculate pages
+      const totalPages = Math.ceil(categories?.length / limit);
+      if (totalPages) {
+        setPages(totalPages);
+      } else {
+        setPages(1);
+      }
+    }
+  }, [categories, limit]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [limit]);
+
+  // delete category
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["deleteCategory"],
+    mutationFn: async (id) => {
+      const { data } = await deleteCategory(id);
+      return data;
+    },
+    onSuccess: () => {
+      toast.success("Category deleted successfully.");
+      refetch();
+    },
+  });
   return (
     <>
       <BreadCumb title="Categories" page="All Categories">
@@ -19,9 +65,9 @@ const Categories = () => {
         </div>
       </BreadCumb>
       <Table
-        headers={["ID", "Name", "Image", "Action"]}
+        headers={["ID", "Name", "Description", "Action"]}
         cols="grid-cols-4"
-        // isLoading={isLoading}
+        isLoading={isLoading}
         limit={limit}
         setLimit={setLimit}
         search={search}
@@ -29,95 +75,34 @@ const Categories = () => {
         pages={pages}
         setPage={setPage}
         page={page}
-        totalItems={3}
+        totalItems={categories?.length}
       >
-        {/* {creditCards
-        ?.slice(page * limit - limit, limit * page)
-        .filter((item) =>
-          item?.custName?.toLowerCase()?.includes(search?.toLowerCase())
-        )
-        .map((creditCard, idx) => ( */}
-        <>
-          <span className="py-3 pl-4 flex items-center">1</span>
-          <span className="py-3">Category One</span>
-          <span className="py-3 flex items-center">
-            <img
-              src="https://static-01.daraz.com.bd/p/5a32d0e51410811735ea81c26eaed848.jpg"
-              alt="product"
-              className="w-16 rounded-lg"
-            />
-          </span>
-          <div className="py-3 pr-4 flex items-center gap-2">
-            <Link
-              href={`/forms/credit-card/edit-credit-card/`}
-              className="rounded py-[6px] px-2 bg-primary text-white cursor-pointer"
-            >
-              <MdEdit />
-            </Link>
-            <button
-              className="rounded py-[6px] px-2 bg-red-500 text-white cursor-pointer"
-              // onClick={() => deleteCreditCard(creditCard?._id)}
-            >
-              {/* {loading ? <Loading className="w-4 h-4" /> : <MdDelete />} */}
-              <MdDelete />
-            </button>
-          </div>
-        </>
-
-        <>
-          <span className="py-3 pl-4 flex items-center">2</span>
-          <span className="py-3 flex items-center">Category Two</span>
-          <span className="py-3 flex items-center">
-            <img
-              src="https://static.aadi.com.bd/__sized__/products/17660-196930-formal-shirt-assorted-le-reve-reve-tex-ltd-714242-1-crop-c0-5__0-5-510x510-70.jpg"
-              alt="product"
-              className="w-16 rounded-lg"
-            />
-          </span>
-          <div className="py-3 pr-4 flex items-center gap-2">
-            <Link
-              href={`/forms/credit-card/edit-credit-card/`}
-              className="rounded py-[6px] px-2 bg-primary text-white cursor-pointer"
-            >
-              <MdEdit />
-            </Link>
-            <button
-              className="rounded py-[6px] px-2 bg-red-500 text-white cursor-pointer"
-              // onClick={() => deleteCreditCard(creditCard?._id)}
-            >
-              {/* {loading ? <Loading className="w-4 h-4" /> : <MdDelete />} */}
-              <MdDelete />
-            </button>
-          </div>
-        </>
-
-        <>
-          <span className="py-3 pl-4 flex items-center">3</span>
-          <span className="py-3 flex items-center">Category Three</span>
-          <span className="py-3 flex items-center">
-            <img
-              src="https://images.unsplash.com/photo-1624835567150-0c530a20d8cc?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fG1lbnMlMjBzaGlydHxlbnwwfHwwfHx8MA%3D%3D"
-              alt="product"
-              className="w-16 rounded-lg"
-            />
-          </span>
-          <div className="py-3 pr-4 flex items-center gap-2">
-            <Link
-              href={`/forms/credit-card/edit-credit-card/`}
-              className="rounded py-[6px] px-2 bg-primary text-white cursor-pointer"
-            >
-              <MdEdit />
-            </Link>
-            <button
-              className="rounded py-[6px] px-2 bg-red-500 text-white cursor-pointer"
-              // onClick={() => deleteCreditCard(creditCard?._id)}
-            >
-              {/* {loading ? <Loading className="w-4 h-4" /> : <MdDelete />} */}
-              <MdDelete />
-            </button>
-          </div>
-        </>
-        {/* ))} */}
+        {categories
+          ?.slice(page * limit - limit, limit * page)
+          .filter((item) =>
+            item?.name?.toLowerCase()?.includes(search?.toLowerCase())
+          )
+          .map((category, idx) => (
+            <>
+              <span className="py-3 pl-4 flex items-center">{idx + 1}</span>
+              <span className="py-3">{category?.name}</span>
+              <span className="py-3">{category?.description}</span>
+              <div className="py-3 pr-4 flex items-center gap-2">
+                <Link
+                  href={`/forms/credit-card/edit-credit-card/`}
+                  className="rounded py-[6px] px-2 bg-primary text-white cursor-pointer"
+                >
+                  <MdEdit />
+                </Link>
+                <button
+                  className="rounded py-[6px] px-2 bg-red-500 text-white cursor-pointer"
+                  onClick={() => mutate(category?.id)}
+                >
+                  {isPending ? <Loading className="w-4 h-4" /> : <MdDelete />}
+                </button>
+              </div>
+            </>
+          ))}
       </Table>
     </>
   );
