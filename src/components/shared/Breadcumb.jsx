@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { FaChevronRight } from "react-icons/fa6";
 
-const Breadcumb = ({ pathnames }) => {
+const Breadcumb = ({ title, pathnames }) => {
   return (
     <div className="py-8 bg-[#EDEEF2]">
+      {title && <h2 className="text-[50px] text-center">{title}</h2>}
       <div className="container flex items-center justify-center flex-wrap gap-2">
         {pathnames?.map((item, idx) => (
           <>
@@ -11,7 +12,7 @@ const Breadcumb = ({ pathnames }) => {
               <span>{item}</span>
             ) : (
               <>
-                <Link className="transition-all hover:text-primary" href="#">
+                <Link className="transition-all hover:text-primary" href="/">
                   {item}
                 </Link>
                 <FaChevronRight className="text-xs" />

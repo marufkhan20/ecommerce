@@ -60,7 +60,7 @@ const MobileNav = ({ openNav, setOpenNav }) => {
           <Link href="#">
             <img src="/images/icons/star.png" className="w-5" alt="star" />
           </Link>
-          <Link href="#">
+          <Link href="/cart">
             <img src="/images/icons/cart.png" className="w-5" alt="cart" />
           </Link>
         </div>

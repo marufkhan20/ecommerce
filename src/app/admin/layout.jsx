@@ -10,7 +10,7 @@ const layout = ({ children }) => {
       <ProgressBar
         height="2px"
         color="#7000FE"
-        options={{ showSpinner: true }}
+        options={{ showSpinner: false }}
         shallowRouting
       />
       {children}
