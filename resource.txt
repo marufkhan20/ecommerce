@@ -7,3 +7,5 @@ After activating virtualenv by source "venv/Scripts/activate"
 1. pip install -r requirements.txt
 2. python manage.py makemigrations
 3 python manage.py migrate
+
+https://documenter.getpostman.com/view/16402791/2sA35EZhwD

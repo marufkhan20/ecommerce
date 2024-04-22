@@ -1,3 +1,4 @@
+import Loading from "@/app/admin/_components/ui/Loading";
 import { cn } from "@/lib/utills";
 import Link from "next/link";
 
@@ -8,13 +9,16 @@ const Button = ({
   className = "",
   href,
   children,
+  loading,
   ...rest
 }) => {
   const styles = `
-    font-bold text-sm px-9 py-4 rounded-full transition-all ${
-      variant === "primary" &&
-      "bg-primary text-white hover:bg-black hover:text-white"
+    font-bold text-sm px-9 py-4 rounded-full transition-all  ${
+      loading && "cursor-not-allowed bg-gray-600 hover:bg-gray-600"
     } ${
+    variant === "primary" &&
+    "bg-primary text-white hover:bg-black hover:text-white"
+  } ${
     variant === "secondary" &&
     "bg-white text-black hover:bg-black hover:text-white"
   } ${variant === "dark" && "bg-black text-white hover:bg-primary"}
@@ -31,7 +35,7 @@ const Button = ({
       {...rest}
       className={cn(styles, className)}
     >
-      {children}
+      {loading ? <Loading className="w-6 h-6" /> : children}
     </button>
   );
 };
