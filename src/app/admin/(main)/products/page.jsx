@@ -17,7 +17,7 @@ const Products = () => {
 
   // get products
   const {
-    data: products,
+    data: productData,
     isLoading,
     refetch,
   } = useQuery({
@@ -29,16 +29,16 @@ const Products = () => {
   });
 
   useEffect(() => {
-    if (products?.length > 0) {
+    if (productData?.results?.length > 0) {
       // calculate pages
-      const totalPages = Math.ceil(products?.length / limit);
+      const totalPages = Math.ceil(productData?.results?.length / limit);
       if (totalPages) {
         setPages(totalPages);
       } else {
         setPages(1);
       }
     }
-  }, [products, limit]);
+  }, [productData, limit]);
 
   useEffect(() => {
     setPage(1);
@@ -74,9 +74,9 @@ const Products = () => {
         pages={pages}
         setPage={setPage}
         page={page}
-        totalItems={products?.length}
+        totalItems={productData?.results?.length}
       >
-        {products
+        {productData?.results
           ?.slice(page * limit - limit, limit * page)
           .filter((item) =>
             item?.title?.toLowerCase()?.includes(search?.toLowerCase())

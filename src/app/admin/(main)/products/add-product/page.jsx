@@ -321,7 +321,7 @@ const AddProduct = () => {
                   ) : (
                     <option>Choose Categories</option>
                   )}
-                  {categoriesData?.map((category) => (
+                  {categoriesData?.results?.map((category) => (
                     <option
                       selected={categories?.includes(category?.id)}
                       key={category?.id}

@@ -30,7 +30,7 @@ const ProductDetailsPage = () => {
     <main>
       <Breadcumb pathnames={["Home", "Products", "Product Details"]} />
 
-      <ProductDetails product={product} />
+      <ProductDetails product={product?.results} />
 
       <RelatedProducts />
     </main>

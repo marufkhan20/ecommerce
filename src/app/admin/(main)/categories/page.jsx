@@ -18,7 +18,7 @@ const Categories = () => {
 
   // get categories
   const {
-    data: categories,
+    data: categoryData,
     isLoading,
     refetch,
   } = useQuery({
@@ -30,16 +30,16 @@ const Categories = () => {
   });
 
   useEffect(() => {
-    if (categories?.length > 0) {
+    if (categoryData?.results?.length > 0) {
       // calculate pages
-      const totalPages = Math.ceil(categories?.length / limit);
+      const totalPages = Math.ceil(categoryData?.results?.length / limit);
       if (totalPages) {
         setPages(totalPages);
       } else {
         setPages(1);
       }
     }
-  }, [categories, limit]);
+  }, [categoryData, limit]);
 
   useEffect(() => {
     setPage(1);
@@ -65,8 +65,8 @@ const Categories = () => {
         </div>
       </BreadCumb>
       <Table
-        headers={["ID", "Name", "Description", "Action"]}
-        cols="grid-cols-4"
+        headers={["ID", "Name", "Image", "Description", "Action"]}
+        cols="grid-cols-5"
         isLoading={isLoading}
         limit={limit}
         setLimit={setLimit}
@@ -75,9 +75,9 @@ const Categories = () => {
         pages={pages}
         setPage={setPage}
         page={page}
-        totalItems={categories?.length}
+        totalItems={categoryData?.results?.length}
       >
-        {categories
+        {categoryData?.results
           ?.slice(page * limit - limit, limit * page)
           .filter((item) =>
             item?.name?.toLowerCase()?.includes(search?.toLowerCase())
@@ -86,6 +86,13 @@ const Categories = () => {
             <>
               <span className="py-3 pl-4 flex items-center">{idx + 1}</span>
               <span className="py-3">{category?.name}</span>
+              <span className="py-3">
+                <img
+                  src={category?.image}
+                  className="w-16 h-16 rounded-full"
+                  alt=""
+                />
+              </span>
               <span className="py-3">{category?.description}</span>
               <div className="py-3 pr-4 flex items-center gap-2">
                 <Link

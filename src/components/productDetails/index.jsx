@@ -1,4 +1,5 @@
 "use client";
+import { useCartStore } from "@/providers/CartStoreProvider";
 import { toPng } from "html-to-image";
 import { useEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
@@ -25,6 +26,8 @@ const ProductDetails = ({ product }) => {
   const [openImageBox, setOpenImageBox] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
 
+  const { products, addToCart } = useCartStore();
+
   useEffect(() => {
     if (product?.primary_image) {
       setActiveProductImage(product?.primary_image);
@@ -42,13 +45,15 @@ const ProductDetails = ({ product }) => {
     description,
   } = product || {};
 
-  const handleDownload = () => {
+  // add to cart handler
+  const addToCartHandler = () => {
+    // generate custom image
     if (divRef.current) {
       toPng(divRef.current).then(function (dataUrl) {
-        const link = document.createElement("a");
-        link.download = "image.png";
-        link.href = dataUrl;
-        link.click();
+        addToCart({
+          ...product,
+          image: dataUrl,
+        });
       });
     }
   };
@@ -69,6 +74,8 @@ const ProductDetails = ({ product }) => {
     setBrandImage("");
     setBrandImageName("");
   };
+
+  console.log("products", products);
 
   // resize brand image
   const [size, setSize] = useState({ width: 200, height: 200 });
@@ -465,7 +472,7 @@ const ProductDetails = ({ product }) => {
                 </div>
 
                 <Button
-                  onClick={handleDownload}
+                  onClick={addToCartHandler}
                   variant="dark"
                   className="w-full"
                 >

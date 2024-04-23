@@ -5,7 +5,7 @@ import Heading from "../shared/Heading";
 import ProductItem from "../shared/ProductItem";
 
 const Products = () => {
-  const { data: products, isPending } = useQuery({
+  const { data: productData, isPending } = useQuery({
     queryKey: ["products"],
     queryFn: async () => {
       const { data } = await getProducts();
@@ -24,12 +24,17 @@ const Products = () => {
             <img className="w-20 h-20" src="/images/loading.gif" alt="" />
           </div>
         )}
-
-        {products?.length > 0 && (
+        {productData?.results?.length > 0 && (
           <div className="mt-12 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-            {products?.map((product) => (
+            {productData?.results?.map((product) => (
               <ProductItem key={product?.id} product={product} />
             ))}
+          </div>
+        )}
+
+        {!isPending && !productData && (
+          <div className="mt-12 text-center text-lg font-semibold">
+            No Products found!!
           </div>
         )}
       </div>

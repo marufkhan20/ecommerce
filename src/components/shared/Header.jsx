@@ -1,5 +1,6 @@
 "use client";
 import { menus } from "@/constants";
+import { useCartStore } from "@/providers/CartStoreProvider";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -11,6 +12,8 @@ const Header = () => {
   const [openNav, setOpenNav] = useState(false);
   const [searchBar, setSearchBar] = useState(false);
   const pathname = usePathname();
+
+  const { products } = useCartStore();
   return (
     <header
       className={`${
@@ -51,14 +54,17 @@ const Header = () => {
           <Link href="#" onClick={() => setSearchBar(true)}>
             <img src="/images/icons/search.png" className="w-5" alt="search" />
           </Link>
-          <Link href="#">
+          <Link href="/auth">
             <img src="/images/icons/user.png" className="w-5" alt="user" />
           </Link>
           <Link href="#">
             <img src="/images/icons/star.png" className="w-5" alt="star" />
           </Link>
-          <Link href="/cart">
+          <Link href="/cart" className="relative">
             <img src="/images/icons/cart.png" className="w-5" alt="cart" />
+            <span className="absolute w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center top-[-50%] right-[-50%] text-sm">
+              {products?.length}
+            </span>
           </Link>
         </div>
 
