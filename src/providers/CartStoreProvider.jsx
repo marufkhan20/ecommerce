@@ -17,7 +17,7 @@ export const CartStoreProvider = ({ children }) => {
     let storedData = localStorage.getItem("cartItems");
     storedData = JSON.parse(storedData);
     // Set the data in state
-    cartItems = storedData;
+    cartItems = storedData || [];
   }
   // }, []);
 
