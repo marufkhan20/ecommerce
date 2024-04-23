@@ -8,11 +8,19 @@ import { createCartStore } from "@/stores/cartStore";
 export const CartStoreContext = createContext(null);
 
 export const CartStoreProvider = ({ children }) => {
-  // get cart data from localStorage
-  let cartItems = localStorage.getItem("cartItems");
-  cartItems = JSON.parse(cartItems);
-
   const storeRef = useRef();
+  // const [cartItems, setCartItems] = useState([]);
+  let cartItems = [];
+
+  // useEffect(() => {
+  if (typeof window !== "undefined") {
+    let storedData = localStorage.getItem("cartItems");
+    storedData = JSON.parse(storedData);
+    // Set the data in state
+    cartItems = storedData;
+  }
+  // }, []);
+
   if (!storeRef.current) {
     storeRef.current = createCartStore({
       products: cartItems,

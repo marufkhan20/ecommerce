@@ -62,9 +62,9 @@ const Header = () => {
           </Link>
           <Link href="/cart" className="relative">
             <img src="/images/icons/cart.png" className="w-5" alt="cart" />
-            <span className="absolute w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center top-[-50%] right-[-50%] text-sm">
-              {products?.length}
-            </span>
+            <p className="absolute w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center top-[-50%] right-[-50%] text-sm">
+              {products ? products?.length : 0}
+            </p>
           </Link>
         </div>
 
