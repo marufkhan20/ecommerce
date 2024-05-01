@@ -9,21 +9,22 @@ export const CartStoreContext = createContext(null);
 
 export const CartStoreProvider = ({ children }) => {
   const storeRef = useRef();
-  // const [cartItems, setCartItems] = useState([]);
-  let cartItems = [];
+  let cart;
 
-  // useEffect(() => {
   if (typeof window !== "undefined") {
-    let storedData = localStorage.getItem("cartItems");
+    let storedData = localStorage.getItem("cart");
     storedData = JSON.parse(storedData);
     // Set the data in state
-    cartItems = storedData || [];
+    cart = storedData || {
+      items: {},
+      totalQty: 0,
+      totalPrice: 0,
+    };
   }
-  // }, []);
 
   if (!storeRef.current) {
     storeRef.current = createCartStore({
-      products: cartItems,
+      cart,
     });
   }
 

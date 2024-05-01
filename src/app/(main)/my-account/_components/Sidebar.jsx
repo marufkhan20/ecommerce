@@ -1,4 +1,5 @@
 "use client";
+import { useAuthStore } from "@/providers/AuthStoreProvider";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -9,6 +10,8 @@ const Sidebar = () => {
   const isActive = (href) => {
     return pathname === href;
   };
+
+  const { logout } = useAuthStore();
   return (
     <div className="w-full md:w-[320px] border bg-white rounded-md h-fit">
       <ul className="flex flex-col divide-y">
@@ -45,7 +48,7 @@ const Sidebar = () => {
           <span>Wishlist</span>
         </Link>
         <li className="cursor-pointer transition-all hover:text-primary py-5 px-2 hover:bg-gray-200">
-          <Link className="w-full block" href="#">
+          <Link onClick={logout} className="w-full block" href="/auth">
             <span>Log out</span>
           </Link>
         </li>

@@ -1,8 +1,18 @@
+"use client";
 import Login from "@/components/auth/Login";
 import Signup from "@/components/auth/Signup";
 import Breadcumb from "@/components/shared/Breadcumb";
+import { useAuthStore } from "@/providers/AuthStoreProvider";
+import { useRouter } from "next/navigation";
 
 const AuthPage = () => {
+  const router = useRouter();
+  const { token } = useAuthStore();
+
+  if (token) {
+    router.push("/my-account");
+  }
+
   return (
     <main>
       <Breadcumb title="My Account" pathnames={["Home", "My Account"]} />

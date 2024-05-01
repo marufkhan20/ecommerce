@@ -3,9 +3,10 @@ import axios from "axios";
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
-    Authorization: "Token bc12d80ff7b55b5573827fb32629d9812605bbba",
+    Authorization: `Token Yl90SGItd1FySXE5X2t2Nmg0RHFtZk5vVFZHU0ZjTm8zSTdjelFtZ0tMVTo=`,
   },
 });

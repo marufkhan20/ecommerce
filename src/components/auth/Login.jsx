@@ -1,6 +1,7 @@
 "use client";
 import Error from "@/app/admin/_components/ui/Error";
 import { login } from "@/http/api";
+import { useAuthStore } from "@/providers/AuthStoreProvider";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -12,6 +13,8 @@ const Login = () => {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [errors, setErrors] = useState({});
+
+  const { login: loginToStore } = useAuthStore();
 
   const router = useRouter();
 
@@ -35,7 +38,8 @@ const Login = () => {
         });
       }
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      loginToStore(data);
       setEmail();
       setPassword();
       setErrors({});

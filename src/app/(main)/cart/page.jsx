@@ -1,7 +1,56 @@
+"use client";
 import Breadcumb from "@/components/shared/Breadcumb";
 import Button from "@/components/ui/Button";
+import { useCartStore } from "@/providers/CartStoreProvider";
 
 const CartPage = () => {
+  const { cart, updateQuantity } = useCartStore();
+
+  console.log("cart", cart);
+
+  const cartElements = [];
+
+  for (let product of Object.values(cart.items)) {
+    cartElements.push(
+      <tr>
+        <td className="py-6 border-b">
+          <img
+            src={product?.item?.image}
+            alt="product"
+            className="w-24 rounded-md"
+          />
+        </td>
+        <td className="py-6 font-medium border-b">{product?.item?.title}</td>
+        <td className="py-6 border-b">${product?.item?.price}</td>
+        <td className="py-6 border-b">
+          <div className="bg-[#EDEEF1] p-1 rounded-full flex items-center gap-2 w-fit">
+            <button
+              className="w-6 h-6 rounded-full transition-all hover:bg-white flex items-center justify-center"
+              onClick={() => updateQuantity(product?.item?.id, 1)}
+            >
+              -
+            </button>
+            <input
+              className="w-5 text-center bg-transparent outline-none"
+              type="text"
+              value={product?.qty}
+              name=""
+              id=""
+            />
+            <button
+              className="w-6 h-6 rounded-full transition-all hover:bg-white flex items-center justify-center"
+              onClick={() => updateQuantity(product?.item?.id, 1, true)}
+            >
+              +
+            </button>
+          </div>
+        </td>
+        <td className="py-6 border-b">
+          ${Number(product?.item?.price) * Number(product?.qty)}
+        </td>
+      </tr>
+    );
+  }
   return (
     <main>
       <Breadcumb title="Cart" pathnames={["Home", "Cart"]} />
@@ -20,47 +69,22 @@ const CartPage = () => {
                     <th className="font-medium pb-6 text-left">Subtotal</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <td className="py-6 border-b">
-                      <img
-                        src="http://127.0.0.1:8000/media/product/image/f53027c0-8d8b-45aa-a87b-bc51a033baa2.jpg"
-                        alt="product"
-                        className="w-24 rounded-md"
-                      />
-                    </td>
-                    <td className="py-6 font-medium border-b">Shirt 1</td>
-                    <td className="py-6 border-b">$9.95</td>
-                    <td className="py-6 border-b">
-                      <div className="bg-[#EDEEF1] p-1 rounded-full flex items-center gap-2 w-fit">
-                        <button className="w-6 h-6 rounded-full transition-all hover:bg-white flex items-center justify-center">
-                          -
-                        </button>
-                        <input
-                          className="w-5 text-center bg-transparent outline-none"
-                          type="text"
-                          value="1"
-                          name=""
-                          id=""
-                        />
-                        <button className="w-6 h-6 rounded-full transition-all hover:bg-white flex items-center justify-center">
-                          +
-                        </button>
-                      </div>
-                    </td>
-                    <td className="py-6 border-b">$9.95</td>
-                  </tr>
-                </tbody>
+                <tbody>{cartElements}</tbody>
               </table>
+
+              {Object.keys(cart?.items).length === 0 && (
+                <p className="mt-3">No Cart Items Found!!</p>
+              )}
             </div>
           </div>
-          <div className="w-full md:min-w-[400px] xl:min-w-[500px] p-9 border-4 rounded-3xl bg-white">
+
+          <div className="w-full md:min-w-[400px] md:max-w-[400px] xl:min-w-[500px] p-9 border-4 rounded-3xl bg-white">
             <h2 className="text-[28px] leading-[28px] mb-4 font-semibold">
               Cart totals
             </h2>
             <div className="flex items-center justify-between gap-2 flex-wrap text-lg text-black py-5 border-b">
               <span>Subtotal</span>
-              <span>$9.95</span>
+              <span>${cart?.totalPrice}</span>
             </div>
             <div className="flex items-center justify-between gap-2 flex-wrap text-lg text-black py-5 border-b">
               <span>Shipping: Arlene </span>
@@ -69,7 +93,7 @@ const CartPage = () => {
             <div className="flex items-center justify-between gap-2 flex-wrap text-lg text-black py-5">
               <span>Total</span>
               <span className="font-semibold text-[28px] text-primary">
-                $19.95
+                ${Number(cart?.totalPrice) + 10}
               </span>
             </div>
             <div className="mt-5">

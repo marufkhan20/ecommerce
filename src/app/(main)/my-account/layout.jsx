@@ -1,7 +1,16 @@
+"use client";
 import Breadcumb from "@/components/shared/Breadcumb";
+import { useAuthStore } from "@/providers/AuthStoreProvider";
+import { useRouter } from "next/navigation";
 import Sidebar from "./_components/Sidebar";
 
-const layout = ({ children }) => {
+const MyAccountLayout = ({ children }) => {
+  const router = useRouter();
+  const { token } = useAuthStore();
+
+  if (!token) {
+    router.push("/auth");
+  }
   return (
     <main>
       <Breadcumb title="Dashboard" pathnames={["Home", "My Account"]} />
@@ -15,4 +24,4 @@ const layout = ({ children }) => {
   );
 };
 
-export default layout;
+export default MyAccountLayout;

@@ -3,6 +3,7 @@ import { useCartStore } from "@/providers/CartStoreProvider";
 import { toPng } from "html-to-image";
 import { useEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
+import toast from "react-hot-toast";
 import { FaRegStar, FaStar } from "react-icons/fa";
 import { FiUploadCloud } from "react-icons/fi";
 import "react-resizable/css/styles.css";
@@ -18,15 +19,11 @@ const ProductDetails = ({ product }) => {
   const [brandImageName, setBrandImageName] = useState("");
   const [brandText, setBrandText] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
-  const [brandFont, setBrandFont] = useState("");
-  const [brandTextWeight, setBrandTextWeight] = useState("");
-  const [brandTextSize, setBrandTextSize] = useState("text-[28px]");
-  const [brandFontStyle, setBrandFontStyle] = useState("not-italic");
-  const [brandTextColor, setBrandTextColor] = useState("");
   const [openImageBox, setOpenImageBox] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
+  const [cartLoading, setCartLoading] = useState(false);
 
-  const { products, addToCart } = useCartStore();
+  const { cart, addToCart } = useCartStore();
 
   useEffect(() => {
     if (product?.primary_image) {
@@ -47,6 +44,8 @@ const ProductDetails = ({ product }) => {
 
   // add to cart handler
   const addToCartHandler = () => {
+    setCartLoading(true);
+
     // generate custom image
     if (divRef.current) {
       toPng(divRef.current).then(function (dataUrl) {
@@ -56,6 +55,11 @@ const ProductDetails = ({ product }) => {
         });
       });
     }
+
+    setTimeout(() => {
+      toast.success("Product added successfully.");
+      setCartLoading(false);
+    }, 300);
   };
 
   const captureImage = (e) => {
@@ -75,7 +79,7 @@ const ProductDetails = ({ product }) => {
     setBrandImageName("");
   };
 
-  console.log("products", products);
+  console.log("cart", cart);
 
   // resize brand image
   const [size, setSize] = useState({ width: 200, height: 200 });
@@ -125,9 +129,12 @@ const ProductDetails = ({ product }) => {
                 className="w-full h-fit rounded-3xl"
               />
 
-              <div className="absolute inset-0 w-full h-full grid grid-cols-2">
+              <div
+                className={`absolute grid grid-cols-2`}
+                style={product?.customization_fields?.text}
+              >
                 <div className="overflow-hidden">
-                  {(brandText || selectedOption) && (
+                  {brandText && (
                     <Draggable
                       axis="both"
                       handle=".handle"
@@ -139,45 +146,45 @@ const ProductDetails = ({ product }) => {
                     >
                       <div className="flex justify-center items-center text-center w-full p-5 h-full">
                         <h2
-                          className={`handle ${brandTextSize} ${brandFont} ${brandTextWeight} ${brandFontStyle} cursor-pointer`}
-                          style={
-                            brandTextColor ? { color: brandTextColor } : {}
-                          }
+                          className={`handle text-2xl text-green-600 cursor-pointer text-center`}
                         >
-                          {brandText || selectedOption}
+                          {brandText}
                         </h2>
                       </div>
                     </Draggable>
                   )}
                 </div>
+              </div>
 
-                <div className="overflow-hidden">
-                  {brandImage && !openImageBox && (
-                    <Draggable
-                      axis="both"
-                      handle=".brandLogo"
-                      // defaultPosition={{ x: -200, y: 0 }}
-                      // defaultPosition={{ x: "50%", y: "50%" }}
-                      position={null}
-                      grid={[25, 25]}
-                      scale={1}
-                    >
-                      <div className="flex justify-center items-center p-5 w-full h-full">
-                        <div className="brandLogo w-full h-full flex justify-center items-center">
-                          <img
-                            src={brandImage}
-                            alt="Uploaded Image"
-                            style={{
-                              width: `${size?.width}px`,
-                              height: `${size?.height}`,
-                            }}
-                            className="rounded-lg "
-                          />
-                        </div>
+              <div
+                className="overflow-hidden absolute"
+                style={product?.customization_fields?.image}
+              >
+                {brandImage && !openImageBox && (
+                  <Draggable
+                    axis="both"
+                    handle=".brandLogo"
+                    // defaultPosition={{ x: -200, y: 0 }}
+                    // defaultPosition={{ x: "50%", y: "50%" }}
+                    position={null}
+                    grid={[25, 25]}
+                    scale={1}
+                  >
+                    <div className="">
+                      <div className="brandLogo w-full h-full flex justify-center items-center">
+                        <img
+                          src={brandImage}
+                          alt="Uploaded Image"
+                          style={{
+                            width: `${size?.width}px`,
+                            height: `${size?.height}`,
+                          }}
+                          className="rounded-lg "
+                        />
                       </div>
-                    </Draggable>
-                  )}
-                </div>
+                    </div>
+                  </Draggable>
+                )}
               </div>
             </div>
           </div>
@@ -348,20 +355,14 @@ const ProductDetails = ({ product }) => {
                   name=""
                   id=""
                   className="w-full border rounded-3xl bg-transparent outline-none p-5"
-                  onChange={(e) => setSelectedOption(e.target.value)}
+                  onChange={(e) => setActiveProductImage(e.target.value)}
                 >
                   <option value="">Choose an option</option>
-                  <option value="Once by my side forever in my heart">
-                    Once by my side forever in my heart
-                  </option>
-                  <option value="Best friends come into our lives and leave pawprints on our hearts">
-                    Best friends come into our lives and leave pawprints on our
-                    hearts
-                  </option>
-                  <option value="If love alone could have kept you here, you would have lived forever">
-                    If love alone could have kept you here, you would have lived
-                    forever
-                  </option>
+                  {product?.quotes?.map((quote) => (
+                    <option key={quote?.id} value={quote?.image}>
+                      {quote?.text}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -475,6 +476,7 @@ const ProductDetails = ({ product }) => {
                   onClick={addToCartHandler}
                   variant="dark"
                   className="w-full"
+                  loading={cartLoading}
                 >
                   Add to cart
                 </Button>

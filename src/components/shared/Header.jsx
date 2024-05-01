@@ -1,5 +1,6 @@
 "use client";
 import { menus } from "@/constants";
+import { useAuthStore } from "@/providers/AuthStoreProvider";
 import { useCartStore } from "@/providers/CartStoreProvider";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -13,7 +14,9 @@ const Header = () => {
   const [searchBar, setSearchBar] = useState(false);
   const pathname = usePathname();
 
-  const { products } = useCartStore();
+  const { token } = useAuthStore();
+
+  const { cart } = useCartStore();
   return (
     <header
       className={`${
@@ -54,16 +57,20 @@ const Header = () => {
           <Link href="#" onClick={() => setSearchBar(true)}>
             <img src="/images/icons/search.png" className="w-5" alt="search" />
           </Link>
-          <Link href="/auth">
-            <img src="/images/icons/user.png" className="w-5" alt="user" />
+          <Link href="/my-account">
+            {token ? (
+              <img src="/images/user.png" className="w-6" alt="user" />
+            ) : (
+              <img src="/images/icons/user.png" className="w-5" alt="user" />
+            )}
           </Link>
-          <Link href="#">
+          <Link href="/my-account/wishlist">
             <img src="/images/icons/star.png" className="w-5" alt="star" />
           </Link>
           <Link href="/cart" className="relative">
             <img src="/images/icons/cart.png" className="w-5" alt="cart" />
             <p className="absolute w-5 h-5 rounded-full bg-primary text-white flex items-center justify-center top-[-50%] right-[-50%] text-sm">
-              {products ? products?.length : 0}
+              {cart ? cart?.totalQty : 0}
             </p>
           </Link>
         </div>
