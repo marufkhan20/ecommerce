@@ -6,11 +6,10 @@ import { useCartStore } from "@/providers/CartStoreProvider";
 const CartPage = () => {
   const { cart, updateQuantity } = useCartStore();
 
-  console.log("cart", cart);
-
   const cartElements = [];
 
-  if (cart?.totalQty) {
+  if (cart?.totalQty !== 0) {
+    console.log("working");
     for (let product of Object.values(cart?.items)) {
       cartElements.push(
         <tr>
@@ -74,7 +73,7 @@ const CartPage = () => {
                 <tbody>{cartElements}</tbody>
               </table>
 
-              {Object.keys(cart?.items).length === 0 && (
+              {cart?.totalQty === 0 && (
                 <p className="mt-3">No Cart Items Found!!</p>
               )}
             </div>
