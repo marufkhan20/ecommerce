@@ -10,46 +10,48 @@ const CartPage = () => {
 
   const cartElements = [];
 
-  for (let product of Object.values(cart?.items)) {
-    cartElements.push(
-      <tr>
-        <td className="py-6 border-b">
-          <img
-            src={product?.item?.image}
-            alt="product"
-            className="w-24 rounded-md"
-          />
-        </td>
-        <td className="py-6 font-medium border-b">{product?.item?.title}</td>
-        <td className="py-6 border-b">${product?.item?.price}</td>
-        <td className="py-6 border-b">
-          <div className="bg-[#EDEEF1] p-1 rounded-full flex items-center gap-2 w-fit">
-            <button
-              className="w-6 h-6 rounded-full transition-all hover:bg-white flex items-center justify-center"
-              onClick={() => updateQuantity(product?.item?.id, 1)}
-            >
-              -
-            </button>
-            <input
-              className="w-5 text-center bg-transparent outline-none"
-              type="text"
-              value={product?.qty}
-              name=""
-              id=""
+  if (cart) {
+    for (let product of Object.values(cart?.items)) {
+      cartElements.push(
+        <tr>
+          <td className="py-6 border-b">
+            <img
+              src={product?.item?.image}
+              alt="product"
+              className="w-24 rounded-md"
             />
-            <button
-              className="w-6 h-6 rounded-full transition-all hover:bg-white flex items-center justify-center"
-              onClick={() => updateQuantity(product?.item?.id, 1, true)}
-            >
-              +
-            </button>
-          </div>
-        </td>
-        <td className="py-6 border-b">
-          ${Number(product?.item?.price) * Number(product?.qty)}
-        </td>
-      </tr>
-    );
+          </td>
+          <td className="py-6 font-medium border-b">{product?.item?.title}</td>
+          <td className="py-6 border-b">${product?.item?.price}</td>
+          <td className="py-6 border-b">
+            <div className="bg-[#EDEEF1] p-1 rounded-full flex items-center gap-2 w-fit">
+              <button
+                className="w-6 h-6 rounded-full transition-all hover:bg-white flex items-center justify-center"
+                onClick={() => updateQuantity(product?.item?.id, 1)}
+              >
+                -
+              </button>
+              <input
+                className="w-5 text-center bg-transparent outline-none"
+                type="text"
+                value={product?.qty}
+                name=""
+                id=""
+              />
+              <button
+                className="w-6 h-6 rounded-full transition-all hover:bg-white flex items-center justify-center"
+                onClick={() => updateQuantity(product?.item?.id, 1, true)}
+              >
+                +
+              </button>
+            </div>
+          </td>
+          <td className="py-6 border-b">
+            ${Number(product?.item?.price) * Number(product?.qty)}
+          </td>
+        </tr>
+      );
+    }
   }
   return (
     <main>
