@@ -7,7 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-const EditAccount = () => {
+const EditAccountPage = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("admin@gmail.com");
@@ -198,4 +198,4 @@ const EditAccount = () => {
   );
 };
 
-export default EditAccount;
+export default EditAccountPage;
