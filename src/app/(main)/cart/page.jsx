@@ -10,7 +10,7 @@ const CartPage = () => {
 
   const cartElements = [];
 
-  if (cart) {
+  if (cart?.totalQty) {
     for (let product of Object.values(cart?.items)) {
       cartElements.push(
         <tr>
