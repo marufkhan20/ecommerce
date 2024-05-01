@@ -1,6 +1,6 @@
 "use client";
-import Error from "@/app/admin/_components/ui/Error";
 import Button from "@/components/ui/Button";
+import Error from "@/components/ui/Error";
 import Input from "@/components/ui/Input";
 import { changePassword, updateAccount } from "@/http/api";
 import { useMutation } from "@tanstack/react-query";
