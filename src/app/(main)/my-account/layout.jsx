@@ -1,8 +1,8 @@
 "use client";
 import Breadcumb from "@/components/shared/Breadcumb";
+import Sidebar from "@/components/shared/Sidebar";
 import { useAuthStore } from "@/providers/AuthStoreProvider";
 import { useRouter } from "next/navigation";
-import Sidebar from "./_components/Sidebar";
 
 const MyAccountLayout = ({ children }) => {
   const router = useRouter();
