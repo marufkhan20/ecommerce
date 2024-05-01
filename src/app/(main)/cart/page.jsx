@@ -10,7 +10,7 @@ const CartPage = () => {
 
   const cartElements = [];
 
-  for (let product of Object.values(cart.items)) {
+  for (let product of Object.values(cart?.items)) {
     cartElements.push(
       <tr>
         <td className="py-6 border-b">
