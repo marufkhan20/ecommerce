@@ -14,6 +14,8 @@ export const getProducts = () => api.get("/api/product/");
 export const getProduct = (id) => api.get(`/api/product/${id}/`);
 export const createProduct = (data) => api.post(`/api/product/`, data);
 export const deleteProduct = (id) => api.delete(`/api/product/${id}/`);
+export const getProductPersonalization = (id) =>
+  api.get(`/api/product_personalization/1/`);
 
 // categories
 export const addCategory = (data) => api.post("/api/category/", data);

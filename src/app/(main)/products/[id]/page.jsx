@@ -3,6 +3,8 @@ import ProductDetails from "@/components/productDetails";
 import RelatedProducts from "@/components/productDetails/RelatedProducts";
 import Breadcumb from "@/components/shared/Breadcumb";
 import { products } from "@/data/products";
+import { getProductPersonalization } from "@/http/api";
+import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 
 const ProductDetailsPage = () => {
@@ -10,17 +12,24 @@ const ProductDetailsPage = () => {
   const { id } = useParams();
 
   const isPending = false;
-  const isLoading = false;
   const product = products?.results[0];
 
   // get product details
-  // const { data: product, isLoading } = useQuery({
+  // const { data: productData, isLoading } = useQuery({
   //   queryKey: ["product"],
   //   queryFn: async () => {
   //     const { data } = await getProduct(id);
   //     return data;
   //   },
   // });
+
+  const { data: personalizationData, isLoading } = useQuery({
+    queryKey: ["product_personalization"],
+    queryFn: async () => {
+      const { data } = await getProductPersonalization(1);
+      return data;
+    },
+  });
   return isLoading ? (
     <div className="min-h-[80vh] w-full flex items-center justify-center">
       <img src="/images/loading.gif" alt="" />
@@ -33,7 +42,10 @@ const ProductDetailsPage = () => {
     <main>
       <Breadcumb pathnames={["Home", "Products", "Product Details"]} />
 
-      <ProductDetails product={products?.results[0]} />
+      <ProductDetails
+        personalizationData={personalizationData}
+        product={products?.results[0]}
+      />
 
       <RelatedProducts products={products?.results[0]?.related_products} />
     </main>

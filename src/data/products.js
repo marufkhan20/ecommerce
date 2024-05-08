@@ -112,7 +112,7 @@ export const products = {
           // bottom: 0,
           width: "50%",
           height: "80%",
-          field_type: "IMGOPT",
+          // field_type: "IMGOPT",
         },
         text: {
           left: "34%",
@@ -121,7 +121,7 @@ export const products = {
           // bottom: 0,
           width: "60%",
           height: "40%",
-          field_type: "CHR",
+          // field_type: "CHR",
         },
       },
       review_avg: 0,

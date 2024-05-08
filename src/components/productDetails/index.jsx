@@ -11,19 +11,22 @@ import Button from "../ui/Button";
 import EditImage from "./EditImage";
 import Reviews from "./reviews";
 
-const ProductDetails = ({ product }) => {
+const ProductDetails = ({ product, personalizationData }) => {
   const [activeProductImage, setActiveProductImage] = useState();
   const divRef = useRef(null);
   const [activeTab, setActiveTab] = useState(1);
   const [brandImage, setBrandImage] = useState("");
   const [brandImageName, setBrandImageName] = useState("");
   const [brandText, setBrandText] = useState("");
+  const [brandInt, setBrandInt] = useState("");
   const [selectedOption, setSelectedOption] = useState("");
   const [openImageBox, setOpenImageBox] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
   const [cartLoading, setCartLoading] = useState(false);
 
   const { cart, addToCart } = useCartStore();
+
+  console.log("personalizationData", personalizationData);
 
   useEffect(() => {
     if (product?.primary_image) {
@@ -134,7 +137,7 @@ const ProductDetails = ({ product }) => {
                 style={product?.customization_fields?.text}
               >
                 <div className="overflow-hidden">
-                  {brandText && (
+                  {(brandText || brandInt) && (
                     <Draggable
                       axis="both"
                       handle=".handle"
@@ -148,7 +151,7 @@ const ProductDetails = ({ product }) => {
                         <h2
                           className={`handle text-2xl text-green-600 cursor-pointer text-center`}
                         >
-                          {brandText}
+                          {brandText || brandInt}
                         </h2>
                       </div>
                     </Draggable>
@@ -287,84 +290,103 @@ const ProductDetails = ({ product }) => {
                 Necessitatibus quibusdam est autem quis nisi.
               </p>
 
-              {/* upload custom design */}
-              <div>
-                <h4 className="text-base mt-10">Upload Designs</h4>
+              {personalizationData?.map((item) => {
+                return item?.type === "IMG" ? (
+                  <div>
+                    <h4 className="text-base mt-10">{item?.title}</h4>
 
-                <div className="p-5 border-2 border-dashed mt-5 flex items-center justify-center flex-wrap gap-4 rounded-3xl">
-                  <FiUploadCloud className="text-2xl" />
-                  <span className="text-black font-medium">
-                    Drag & Drop Files Here
-                  </span>
-                  <span>or</span>
-                  <label
-                    className="font-bold text-sm py-2 px-6 rounded-full transition-all cursor-pointer bg-black text-white hover:bg-primary"
-                    htmlFor="logo"
-                  >
-                    Browse Files
-                  </label>
-                  <input
-                    onChange={captureImage}
-                    type="file"
-                    id="logo"
-                    className="hidden"
-                  />
-                </div>
+                    <div className="p-5 border-2 border-dashed mt-5 flex items-center justify-center flex-wrap gap-4 rounded-3xl">
+                      <FiUploadCloud className="text-2xl" />
+                      <span className="text-black font-medium">
+                        Drag & Drop Files Here
+                      </span>
+                      <span>or</span>
+                      <label
+                        className="font-bold text-sm py-2 px-6 rounded-full transition-all cursor-pointer bg-black text-white hover:bg-primary"
+                        htmlFor="logo"
+                      >
+                        Browse Files
+                      </label>
+                      <input
+                        onChange={captureImage}
+                        type="file"
+                        id="logo"
+                        className="hidden"
+                      />
+                    </div>
 
-                {brandImageName && (
-                  <div className="mt-5 flex items-center gap-3">
-                    <span className="text-black font-medium">
-                      {brandImageName}
-                    </span>
-                    <Button
-                      onClick={removeBrandImage}
-                      className="text-sm py-2 px-6"
-                    >
-                      Remove
-                    </Button>
+                    {brandImageName && (
+                      <div className="mt-5 flex items-center gap-3">
+                        <span className="text-black font-medium">
+                          {brandImageName}
+                        </span>
+                        <Button
+                          onClick={removeBrandImage}
+                          className="text-sm py-2 px-6"
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-
-              {/* custom text */}
-              <div>
-                <label
-                  htmlFor="brand-name"
-                  className="text-base mt-10 mb-2 inline-block font-medium text-black"
-                >
-                  Write Something
-                </label>
-                <input
-                  type="text"
-                  className="w-full border rounded-3xl bg-transparent outline-none p-5"
-                  id="brand-name"
-                  placeholder="Write something"
-                  value={brandText}
-                  onChange={(e) => setBrandText(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="brand-name"
-                  className="text-base mt-10 mb-2 inline-block font-medium text-black"
-                >
-                  Select option
-                </label>
-                <select
-                  name=""
-                  id=""
-                  className="w-full border rounded-3xl bg-transparent outline-none p-5"
-                  onChange={(e) => setActiveProductImage(e.target.value)}
-                >
-                  <option value="">Choose an option</option>
-                  {product?.quotes?.map((quote) => (
-                    <option key={quote?.id} value={quote?.image}>
-                      {quote?.text}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                ) : item?.type === "CHR" ? (
+                  <div>
+                    <label
+                      htmlFor="brand-name"
+                      className="text-base mt-10 mb-2 inline-block font-medium text-black"
+                    >
+                      {item?.title}
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full border rounded-3xl bg-transparent outline-none p-5"
+                      id="brand-name"
+                      placeholder={item?.title}
+                      value={brandText}
+                      onChange={(e) => setBrandText(e.target.value)}
+                    />
+                  </div>
+                ) : item?.type === "INT" ? (
+                  <div>
+                    <label
+                      htmlFor="brand-int"
+                      className="text-base mt-10 mb-2 inline-block font-medium text-black"
+                    >
+                      {item?.title}
+                    </label>
+                    <input
+                      type="number"
+                      className="w-full border rounded-3xl bg-transparent outline-none p-5"
+                      id="brand-int"
+                      placeholder={item?.title}
+                      value={brandInt}
+                      onChange={(e) => setBrandInt(e.target.value)}
+                    />
+                  </div>
+                ) : item?.type === "OPT" ? (
+                  <div>
+                    <label
+                      htmlFor="brand-name"
+                      className="text-base mt-10 mb-2 inline-block font-medium text-black"
+                    >
+                      {item?.title}
+                    </label>
+                    <select
+                      name=""
+                      id=""
+                      className="w-full border rounded-3xl bg-transparent outline-none p-5"
+                      onChange={(e) => setBrandText(e.target.value)}
+                    >
+                      <option value="">Choose an quote</option>
+                      {item?.quote?.map((quote) => (
+                        <option key={quote?.id} value={quote?.quote}>
+                          {quote?.quote}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ) : null;
+              })}
 
               {/* text styles */}
               {/* {(brandText || selectedOption) && (

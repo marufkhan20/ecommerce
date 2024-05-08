@@ -9,3 +9,9 @@ After activating virtualenv by source "venv/Scripts/activate"
 3 python manage.py migrate
 
 https://documenter.getpostman.com/view/16402791/2sA35EZhwD
+
+// product types
+CHR = Text field
+INT = Number field
+IMG  = Image field
+OPT = Option field quote select
