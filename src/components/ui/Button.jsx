@@ -1,4 +1,4 @@
-import Loading from "@/app/admin/_components/ui/Loading";
+import Loading from "@/adminComponents/ui/Loading";
 import { cn } from "@/lib/utills";
 import Link from "next/link";
 
