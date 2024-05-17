@@ -1,10 +1,10 @@
 "use client";
+import Header from "@/app/admin/_components/Header";
+import PrivateRoute from "@/app/admin/_components/PrivateRoute";
+import Sidebar from "@/app/admin/_components/Sidebar";
 import { useAuthStore } from "@/providers/AuthStoreProvider";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Header from "../_components/Header";
-import PrivateRoute from "../_components/PrivateRoute";
-import Sidebar from "../_components/Sidebar";
 
 const DashboardLayout = ({ children }) => {
   const [openSidebar, setOpenSidebar] = useState(false);

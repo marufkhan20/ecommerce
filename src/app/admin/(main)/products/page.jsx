@@ -1,13 +1,13 @@
 "use client";
+import BreadCumb from "@/app/admin/_components/BreadCumb";
+import Table from "@/app/admin/_components/Table";
+import Button from "@/app/admin/_components/ui/Button";
+import Loading from "@/app/admin/_components/ui/Loading";
 import { deleteProduct, getProducts } from "@/http/api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { MdDelete, MdEdit } from "react-icons/md";
-import BreadCumb from "../../_components/BreadCumb";
-import Table from "../../_components/Table";
-import Button from "../../_components/ui/Button";
-import Loading from "../../_components/ui/Loading";
 
 const Products = () => {
   const [limit, setLimit] = useState(10);
