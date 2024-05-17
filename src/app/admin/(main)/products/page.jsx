@@ -1,8 +1,8 @@
 "use client";
-import BreadCumb from "@/app/admin/_components/BreadCumb";
-import Table from "@/app/admin/_components/Table";
-import Button from "@/app/admin/_components/ui/Button";
-import Loading from "@/app/admin/_components/ui/Loading";
+import BreadCumb from "@/adminComponents/BreadCumb";
+import Table from "@/adminComponents/Table";
+import Button from "@/adminComponents/ui/Button";
+import Loading from "@/adminComponents/ui/Loading";
 import { deleteProduct, getProducts } from "@/http/api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Link from "next/link";

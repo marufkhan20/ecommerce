@@ -1,16 +1,16 @@
 "use client";
 import { useEffect, useState } from "react";
 // import { Link, useNavigate } from "next/";
+import Button from "@/adminComponents/ui/Button";
+import Error from "@/adminComponents/ui/Error";
+import Input from "@/adminComponents/ui/Input";
+import Label from "@/adminComponents/ui/Label";
 import { login } from "@/http/api";
 import { useAuthStore } from "@/providers/AuthStoreProvider";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import Button from "../_components/ui/Button";
-import Error from "../_components/ui/Error";
-import Input from "../_components/ui/Input";
-import Label from "../_components/ui/Label";
 
 const Login = () => {
   const [email, setEmail] = useState();

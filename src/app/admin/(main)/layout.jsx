@@ -1,7 +1,7 @@
 "use client";
-import Header from "@/app/admin/_components/Header";
-import PrivateRoute from "@/app/admin/_components/PrivateRoute";
-import Sidebar from "@/app/admin/_components/Sidebar";
+import Header from "@/adminComponents/Header";
+import PrivateRoute from "@/adminComponents/PrivateRoute";
+import Sidebar from "@/adminComponents/Sidebar";
 import { useAuthStore } from "@/providers/AuthStoreProvider";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

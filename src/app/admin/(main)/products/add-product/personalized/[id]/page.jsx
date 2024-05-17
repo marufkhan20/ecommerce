@@ -1,9 +1,9 @@
 "use client";
-import Uploader from "@/app/admin/_components/addProduct/Uploader";
-import BreadCumb from "@/app/admin/_components/BreadCumb";
-import Button from "@/app/admin/_components/ui/Button";
-import Input from "@/app/admin/_components/ui/Input";
-import Label from "@/app/admin/_components/ui/Label";
+import Uploader from "@/adminComponents/addProduct/Uploader";
+import BreadCumb from "@/adminComponents/BreadCumb";
+import Button from "@/adminComponents/ui/Button";
+import Input from "@/adminComponents/ui/Input";
+import Label from "@/adminComponents/ui/Label";
 import { createProductPersonalization } from "@/http/api";
 import { useMutation } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
