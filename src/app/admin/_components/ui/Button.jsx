@@ -37,7 +37,9 @@ const Button = ({
     >
       <div className="flex items-center gap-3">
         {loading && <Loading className="w-7 h-7" />}{" "}
-        <div className="min-w-fit">{children}</div>
+        <div className="min-w-fit flex items-center justify-center w-full">
+          {children}
+        </div>
       </div>
     </button>
   );

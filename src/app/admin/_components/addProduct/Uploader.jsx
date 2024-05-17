@@ -3,7 +3,14 @@ import { IoCloudUploadOutline } from "react-icons/io5";
 import { MdOutlineFileUpload } from "react-icons/md";
 import { PiImageThin } from "react-icons/pi";
 
-const Uploader = ({ id, htmlFor, type = "primary", onChange, imageName }) => {
+const Uploader = ({
+  id,
+  htmlFor,
+  type = "primary",
+  parentId,
+  onChange,
+  imageName,
+}) => {
   const captureImage = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
@@ -15,8 +22,13 @@ const Uploader = ({ id, htmlFor, type = "primary", onChange, imageName }) => {
           imageName: file?.name,
         });
       } else {
-        onChange(id, "image", reader.result);
-        onChange(id, "imageName", file?.name);
+        if (parentId) {
+          onChange(parentId, id, "image", reader.result);
+          onChange(parentId, id, "imageName", file?.name);
+        } else {
+          onChange(id, "image", reader.result);
+          onChange(id, "imageName", file?.name);
+        }
       }
     };
   };

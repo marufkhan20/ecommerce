@@ -10,14 +10,14 @@ export const createAuthStore = (initState = defaultInitState) => {
     ...initState,
     login: (data) =>
       set((state) => {
-        state.token = data?.results?.token;
-        state.user = data?.results?.user;
+        state.token = data?.token;
+        state.user = data?.user;
 
         localStorage.setItem(
           "auth",
           JSON.stringify({
-            token: data?.results?.token,
-            user: data?.results?.user,
+            token: data?.token,
+            user: data?.user,
           })
         );
 

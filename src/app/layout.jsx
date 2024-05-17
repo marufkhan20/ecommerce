@@ -1,3 +1,4 @@
+import { AuthStoreProvider } from "@/providers/AuthStoreProvider";
 import { Poppins } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
@@ -17,7 +18,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={poppins.className}>
         <Toaster />
-        {children}
+        <AuthStoreProvider>{children}</AuthStoreProvider>
       </body>
     </html>
   );

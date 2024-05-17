@@ -1,17 +1,21 @@
+"use client";
+import { useAuthStore } from "@/providers/AuthStoreProvider";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import { FaBars } from "react-icons/fa6";
 import { RiSearchLine } from "react-icons/ri";
 import Button from "./ui/Button";
 import Input from "./ui/Input";
 
 const Header = ({ setOpenSidebar }) => {
-  // logout handler
-  // const dispatch = useDispatch();
+  const { logout } = useAuthStore();
+  const router = useRouter();
 
-  // const logoutHandler = () => {
-  //   dispatch(userLoggedOut());
-  //   toast.success("Logged out successfully");
-  // };
-
+  const logoutHandler = () => {
+    logout();
+    router.push("/admin/login");
+    toast.success("Logout successful");
+  };
   return (
     <header className="py-6 bg-white flex items-center justify-between gap-5 flex-wrap pr-8">
       <div className="flex items-center gap-5">
@@ -25,7 +29,7 @@ const Header = ({ setOpenSidebar }) => {
         </div>
       </div>
       <div className="flex items-center gap-5">
-        <Button>Logout</Button>
+        <Button onClick={logoutHandler}>Logout</Button>
         <img
           src="https://modernize-nextjs.adminmart.com/images/profile/user-1.jpg"
           alt="avatar"

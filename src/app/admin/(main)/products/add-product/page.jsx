@@ -5,7 +5,12 @@ import Button from "@/app/admin/_components/ui/Button";
 import Error from "@/app/admin/_components/ui/Error";
 import Input from "@/app/admin/_components/ui/Input";
 import Label from "@/app/admin/_components/ui/Label";
-import { createProduct, getCategories } from "@/http/api";
+import {
+  createProduct,
+  getBrands,
+  getCategories,
+  getSizeVariants,
+} from "@/http/api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -14,9 +19,14 @@ import toast from "react-hot-toast";
 const AddProduct = () => {
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
+  const [discountPrice, setDiscountPrice] = useState("");
   const [stock, setStock] = useState("");
   const [description, setDescription] = useState("");
-  const [categories, setCategories] = useState([]);
+  const [category, setCategory] = useState("");
+  const [brand, setBrand] = useState("");
+  const [size, setSize] = useState([]);
+  const [metaKeywords, setMetaKeywords] = useState("");
+  const [metaDescription, setMetaDescription] = useState("");
   const [primaryImage, setPrimaryImage] = useState({
     image: "",
     imageName: "",
@@ -25,22 +35,6 @@ const AddProduct = () => {
     {
       id: 1,
       name: "",
-      image: "",
-      imageName: "",
-    },
-  ]);
-  const [productVariations, setProductVariations] = useState([
-    {
-      id: 1,
-      name: "",
-      image: "",
-      imageName: "",
-    },
-  ]);
-  const [quotes, setQuotes] = useState([
-    {
-      id: 1,
-      text: "",
       image: "",
       imageName: "",
     },
@@ -76,6 +70,47 @@ const AddProduct = () => {
     },
   });
 
+  // get brands
+  const { data: brandsData, isBrandLoading } = useQuery({
+    queryKey: ["getBrands"],
+    queryFn: async () => {
+      const { data } = await getBrands();
+      return data;
+    },
+  });
+
+  // get size variants
+  const { data: sizeData, isSizeLoading } = useQuery({
+    queryKey: ["getSizeVariants"],
+    queryFn: async () => {
+      const { data } = await getSizeVariants();
+      return data;
+    },
+  });
+
+  // select sizes handler
+  const selectSizesHandler = (event) => {
+    const selectedOptionsId = Array.from(
+      event.target.selectedOptions,
+      (option) => option.value
+    );
+
+    const sizes = [];
+
+    sizeData?.forEach((sizeVariant) => {
+      console.log("size variant", sizeVariant);
+      selectedOptionsId?.forEach((item) => {
+        console.log("item", item);
+        if (sizeVariant.id === Number(item)) {
+          console.log("selected sizeVariant", sizeVariant);
+          sizes.push(sizeVariant);
+        }
+      });
+    });
+
+    setSize(sizes);
+  };
+
   // add new color variantion
   const addNewColorVariation = () => {
     const id =
@@ -108,67 +143,6 @@ const AddProduct = () => {
     setColorVariations(updatedColorVariations);
   };
 
-  // add new product variantion
-  const addNewProductVariation = () => {
-    const id =
-      productVariations?.length === 0
-        ? 1
-        : productVariations[productVariations.length - 1]?.id + 1;
-
-    setProductVariations([
-      ...productVariations,
-      {
-        id,
-        name: "",
-        image: "",
-        imageName: "",
-      },
-    ]);
-  };
-
-  // update product variant state
-  const changeProductVariant = (id, name, value) => {
-    const updatedProductVariations = productVariations.map((item) => {
-      if (item?.id === id) {
-        item[name] = value;
-        return item;
-      } else {
-        return item;
-      }
-    });
-
-    setProductVariations(updatedProductVariations);
-  };
-
-  // add new quote
-  const addNewQuote = () => {
-    const id = quotes?.length === 0 ? 1 : quotes[quotes.length - 1]?.id + 1;
-
-    setQuotes([
-      ...quotes,
-      {
-        id,
-        text: "",
-        image: "",
-        imageName: "",
-      },
-    ]);
-  };
-
-  // update quote state
-  const changeQuote = (id, name, value) => {
-    const updatedQuotes = quotes.map((item) => {
-      if (item?.id === id) {
-        item[name] = value;
-        return item;
-      } else {
-        return item;
-      }
-    });
-
-    setQuotes(updatedQuotes);
-  };
-
   // change customize image
   const changeCustomizeImage = (name, value) => {
     const updated = customizeImage;
@@ -183,15 +157,6 @@ const AddProduct = () => {
     setCustomizeText({ ...updated });
   };
 
-  // select categories handler
-  const selectCategoriesHandler = (event) => {
-    const selectedOptions = Array.from(
-      event.target.selectedOptions,
-      (option) => option.value
-    );
-    setCategories(selectedOptions);
-  };
-
   // create new product
   const { mutate, isPending } = useMutation({
     mutationKey: ["createProduct"],
@@ -200,10 +165,15 @@ const AddProduct = () => {
       return data;
     },
     onSuccess: (data) => {
-      toast.success("Product created successfully.");
-      router.push("/admin/products");
+      console.log("product data", data);
+      toast.success(
+        "Product created successfully. Please create prodcut personalized"
+      );
+      router.push(`/admin/add-product/personalized/${data?.id}`);
     },
   });
+
+  console.log("size", size);
 
   // submit handler
   const submitHandler = (e) => {
@@ -232,7 +202,7 @@ const AddProduct = () => {
       validationErrors.primaryImage = "Product Image is required!";
     }
 
-    if (categories?.length === 0) {
+    if (!category) {
       validationErrors.categories = "Product category is required!";
     }
 
@@ -240,29 +210,39 @@ const AddProduct = () => {
       return setErrors(validationErrors);
     }
 
+    // get size variants id
+    const sizeVariantsId = size?.map((item) => item.id);
+
+    const formatedColoredVariants = colorVariations?.map((item) => {
+      return {
+        name: item.name,
+        image: item.image,
+      };
+    });
+
     mutate({
       title,
-      price,
-      stock,
+      discount_price: discountPrice,
+      current_price: price,
+      quantity: stock,
       description,
-      primaryImage: primaryImage?.image,
-      variations: productVariations,
-      coloredVariations: colorVariations,
-      categories,
-      customizationFields: {
-        image: customizeImage,
-        text: customizeText,
-      },
-      customizableFieldValues: [
+      primary_image: primaryImage?.image,
+      color: formatedColoredVariants,
+      category,
+      brand,
+      size: sizeVariantsId,
+      image_positioning_data: [
         {
-          fieldName: "image",
-          image: primaryImage?.image,
+          // fieldName: "image",
+          image_position: customizeImage,
         },
         {
-          fieldName: "text",
-          image: primaryImage?.image,
+          // fieldName: "text",
+          text_position: customizeText,
         },
       ],
+      meta_description: metaDescription,
+      meta_keywords: metaKeywords,
     });
   };
   return (
@@ -297,12 +277,21 @@ const AddProduct = () => {
                 <Error>{errors?.price}</Error>
               </div>
               <div className="flex flex-col gap-3">
-                <Label htmlFor="stock">In Stock</Label>
+                <Label htmlFor="discountPrice">Product Discount Price</Label>
+                <Input
+                  value={discountPrice}
+                  onChange={(e) => setDiscountPrice(e.target.value)}
+                  id="discountPrice"
+                  placeholder="Enter your product discount price"
+                />
+              </div>
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="stock">Quantity</Label>
                 <Input
                   value={stock}
                   onChange={(e) => setStock(e.target.value)}
                   id="stock"
-                  placeholder="Enter your product stock"
+                  placeholder="Enter your product quantity"
                 />
                 <Error>{errors?.stock}</Error>
               </div>
@@ -313,25 +302,42 @@ const AddProduct = () => {
                   className="text-sm w-full block outline-none p-2 rounded-[7px] focus:ring-1 ring-primary bg-transparent border"
                   name=""
                   id="category"
-                  multiple
-                  onChange={selectCategoriesHandler}
+                  onChange={(e) => setCategory(e.target.value)}
                 >
                   {isLoading ? (
                     <option>Loading...</option>
                   ) : (
                     <option>Choose Categories</option>
                   )}
-                  {categoriesData?.results?.map((category) => (
-                    <option
-                      selected={categories?.includes(category?.id)}
-                      key={category?.id}
-                      value={category?.id}
-                    >
+                  {categoriesData?.map((category) => (
+                    <option key={category?.id} value={category?.id}>
                       {category?.name}
                     </option>
                   ))}
                 </select>
                 <Error>{errors?.categories}</Error>
+              </div>
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="brand">Brand</Label>
+
+                <select
+                  className="text-sm w-full block outline-none p-2 rounded-[7px] focus:ring-1 ring-primary bg-transparent border"
+                  name=""
+                  id="brand"
+                  onChange={(e) => setBrand(e.target.value)}
+                >
+                  {isBrandLoading ? (
+                    <option>Loading...</option>
+                  ) : (
+                    <option>Choose Brands</option>
+                  )}
+                  {brandsData?.map((brand) => (
+                    <option key={brand?.id} value={brand?.id}>
+                      {brand?.name}
+                    </option>
+                  ))}
+                </select>
+                <Error>{errors?.brands}</Error>
               </div>
               <div className="flex flex-col gap-3">
                 <Label htmlFor="description">Description</Label>
@@ -356,6 +362,74 @@ const AddProduct = () => {
                   htmlFor="primary_image"
                 />
                 <Error>{errors?.primaryImage}</Error>
+              </div>
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="size">Product Size</Label>
+                <select
+                  className="text-sm w-full block outline-none p-2 rounded-[7px] focus:ring-1 ring-primary bg-transparent border"
+                  name=""
+                  id="size"
+                  multiple
+                  onChange={selectSizesHandler}
+                >
+                  {isSizeLoading ? (
+                    <option>Loading...</option>
+                  ) : (
+                    <option>Choose Size</option>
+                  )}
+                  {sizeData?.map((size) => (
+                    <option key={size?.id} value={size?.id}>
+                      {size?.name}
+                    </option>
+                  ))}
+                </select>
+
+                {size && (
+                  <ul className="flex items-center gap-2">
+                    {size?.map((item) =>
+                      item?.children?.length > 0 ? (
+                        item?.children?.map((sizeItem) => (
+                          <li
+                            className="py-1.5 px-4 min-w-fit text-sm transition-all hover:bg-gray-100 block rounded-full border"
+                            key={sizeItem?.id}
+                          >
+                            {sizeItem?.name}
+                          </li>
+                        ))
+                      ) : (
+                        <li
+                          className="py-1.5 px-4 text-sm transition-all hover:bg-gray-100 min-w-fit block rounded-full border"
+                          key={item?.id}
+                        >
+                          {item?.name}
+                        </li>
+                      )
+                    )}
+                  </ul>
+                )}
+              </div>
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="keywords">Meta Keywords</Label>
+                <Input
+                  value={metaKeywords}
+                  onChange={(e) => setMetaKeywords(e.target.value)}
+                  id="keywords"
+                  placeholder="Enter your product meta keywords"
+                />
+              </div>
+              <div className="flex flex-col gap-3">
+                <Label htmlFor="metaDescription">Meta Description</Label>
+
+                <textarea
+                  className="text-sm w-full block outline-none p-2 rounded-[7px] focus:ring-1 ring-primary bg-transparent border"
+                  name=""
+                  id="metaDescription"
+                  cols="20"
+                  rows="5"
+                  placeholder="Enter product meta description"
+                  value={metaDescription}
+                  onChange={(e) => setMetaDescription(e.target.value)}
+                />
               </div>
             </div>
           </div>
@@ -610,96 +684,6 @@ const AddProduct = () => {
                 onClick={addNewColorVariation}
               >
                 Add New Color
-              </button>
-            </div>
-          </div>
-
-          {/* product variations */}
-          <div>
-            <h3 className="my-3 mt-5 text-lg border p-3 rounded-lg">
-              Product Variations
-            </h3>
-            <div>
-              <div className="flex flex-col gap-5">
-                {productVariations?.map((item) => (
-                  <div key={item?.id} className="grid sm:grid-cols-2 gap-5">
-                    <div className="flex flex-col gap-3">
-                      <Label htmlFor={`product-${item?.id}`}>
-                        Product Name
-                      </Label>
-                      <Input
-                        id={`product-${item?.id}`}
-                        value={item?.name}
-                        onChange={(e) =>
-                          changeProductVariant(item?.id, "name", e.target.value)
-                        }
-                        placeholder="Enter your product Name"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-3">
-                      <Label htmlFor={item?.id}>Upload Product Image</Label>
-                      <Uploader
-                        onChange={changeProductVariant}
-                        type="secondary"
-                        htmlFor={"product-image-" + item?.id}
-                        id={item?.id}
-                        imageName={item?.imageName}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <button
-                type="button"
-                className="mt-5 border rounded-lg py-2 px-4 border-primary text-primary text-sm"
-                onClick={addNewProductVariation}
-              >
-                Add New Product Variant
-              </button>
-            </div>
-          </div>
-
-          {/* quotes */}
-          <div>
-            <h3 className="my-3 mt-5 text-lg border p-3 rounded-lg">
-              Add Quotes
-            </h3>
-            <div>
-              <div className="flex flex-col gap-5">
-                {quotes?.map((item) => (
-                  <div key={item?.id} className="grid sm:grid-cols-2 gap-5">
-                    <div className="flex flex-col gap-3">
-                      <Label htmlFor={`quote-${item?.id}`}>Quote Text</Label>
-                      <Input
-                        id={`quote-${item?.id}`}
-                        value={item?.text}
-                        onChange={(e) =>
-                          changeQuote(item?.id, "text", e.target.value)
-                        }
-                        placeholder="Enter your Quote Text"
-                      />
-                    </div>
-                    <div className="flex flex-col gap-3">
-                      <Label htmlFor={item?.id}>Upload Quote Image</Label>
-                      <Uploader
-                        onChange={changeQuote}
-                        type="secondary"
-                        htmlFor={"quote-image-" + item?.id}
-                        id={item?.id}
-                        imageName={item?.imageName}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <button
-                type="button"
-                className="mt-5 border rounded-lg py-2 px-4 border-primary text-primary text-sm"
-                onClick={addNewQuote}
-              >
-                Add New Quote
               </button>
             </div>
           </div>

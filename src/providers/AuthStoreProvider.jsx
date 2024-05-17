@@ -39,7 +39,7 @@ export const useAuthStore = (selector) => {
   const authStoreContext = useContext(AuthStoreContext);
 
   if (!authStoreContext) {
-    throw new Error(`useCartStore must be use within AuthStoreProvider`);
+    throw new Error(`useAuthStore must be use within AuthStoreProvider`);
   }
 
   return useStore(authStoreContext, selector);

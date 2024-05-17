@@ -23,11 +23,11 @@ const Signup = () => {
       return res;
     },
     onSuccess: () => {
-      setFirstName();
-      setLastName();
-      setEmail();
-      setPassword();
-      setConfirmPassword();
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
       setErrors({});
       toast.success("User registered successfully, please login.");
     },
