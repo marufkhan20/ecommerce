@@ -1,5 +1,5 @@
 "use client";
-import Error from "@/app/admin/_components/ui/Error";
+import Error from "@/adminComponents/ui/Error";
 import { login } from "@/http/api";
 import { useAuthStore } from "@/providers/AuthStoreProvider";
 import { useMutation } from "@tanstack/react-query";
