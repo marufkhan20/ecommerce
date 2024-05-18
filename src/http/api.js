@@ -10,13 +10,13 @@ export const changePassword = (data) =>
 export const updateAccount = (data) => api.put("/api/user/update/me/", data);
 
 // products
-export const getProducts = () => api.get("/api/product/");
-export const getProduct = (id) => api.get(`/api/product/${id}/`);
+export const getProducts = () => api.get("/api/product_items/");
+export const getProduct = (id) => api.get(`/api/product_details/${id}/`);
 export const createProduct = (data) =>
   api.post(`/api/create_product_item/`, data);
 export const deleteProduct = (id) => api.delete(`/api/product/${id}/`);
 export const getProductPersonalization = (id) =>
-  api.get(`/api/product_personalization/1/`);
+  api.get(`/api/product_personalization/${id}/`);
 
 // categories
 export const addCategory = (data) => api.post("/api/categories/", data);
@@ -32,3 +32,6 @@ export const getSizeVariants = () => api.get("/api/size_variants/");
 // personalization
 export const createProductPersonalization = (data) =>
   api.post("/api/create_product_personalization/", data);
+
+export const createOrder = ({ id, data, token }) =>
+  api.post(`/api/create_customer_personalized_product_item/${id}/`, data);

@@ -37,10 +37,14 @@ const ProductDetails = ({ product, personalizationData }) => {
   // extract product data
   const {
     primary_image,
-    price,
+    current_price,
+    discount_price,
     title,
-    variations,
-    colored_variations,
+    brand,
+    color,
+    is_instock,
+    size: sizeData,
+    category,
     reviews,
     description,
   } = product || {};
@@ -54,7 +58,14 @@ const ProductDetails = ({ product, personalizationData }) => {
       toPng(divRef.current).then(function (dataUrl) {
         addToCart({
           ...product,
-          image: dataUrl,
+          userData: {
+            selectedImage: activeProductImage,
+            finalImage: dataUrl,
+            brandText: brandText || brandInt,
+            brandImage,
+            color,
+            size: selectedSize,
+          },
         });
       });
     }
@@ -84,6 +95,8 @@ const ProductDetails = ({ product, personalizationData }) => {
 
   console.log("cart", cart);
 
+  console.log("image_positioning_data", product?.image_positioning_data);
+
   // resize brand image
   const [size, setSize] = useState({ width: 200, height: 200 });
   return (
@@ -106,17 +119,17 @@ const ProductDetails = ({ product, personalizationData }) => {
                   }`}
                 />
               </div>
-              {variations?.map((variation, idx) => (
+              {color?.map((item) => (
                 <div
-                  key={variation?.id}
+                  key={item?.name}
                   className="w-[100px] h-[100px] rounded-3xl overflow-hidden"
-                  onClick={() => setActiveProductImage(variation?.image)}
+                  onClick={() => setActiveProductImage(item?.image)}
                 >
                   <img
-                    src={variation?.image}
+                    src={item?.image}
                     alt="product"
                     className={`w-full h-full transition-all ${
-                      activeProductImage === variation?.image
+                      activeProductImage === item?.image
                         ? "opacity-100"
                         : "opacity-55 cursor-pointer hover:opacity-100"
                     }`}
@@ -134,7 +147,26 @@ const ProductDetails = ({ product, personalizationData }) => {
 
               <div
                 className={`absolute grid grid-cols-2`}
-                style={product?.customization_fields?.text}
+                style={{
+                  left:
+                    product?.image_positioning_data[1]?.text_position?.left +
+                    "%",
+                  right:
+                    product?.image_positioning_data[1]?.text_position?.right +
+                    "%",
+                  bottom:
+                    product?.image_positioning_data[1]?.text_position?.bottom +
+                    "%",
+                  top:
+                    product?.image_positioning_data[1]?.text_position?.top +
+                    "%",
+                  width:
+                    product?.image_positioning_data[1]?.text_position?.width +
+                    "%",
+                  height:
+                    product?.image_positioning_data[1]?.text_position?.height +
+                    "%",
+                }}
               >
                 <div className="overflow-hidden">
                   {(brandText || brandInt) && (
@@ -161,7 +193,26 @@ const ProductDetails = ({ product, personalizationData }) => {
 
               <div
                 className="overflow-hidden absolute"
-                style={product?.customization_fields?.image}
+                style={{
+                  left:
+                    product?.image_positioning_data[0]?.image_position?.left +
+                    "%",
+                  right:
+                    product?.image_positioning_data[0]?.image_position?.right +
+                    "%",
+                  bottom:
+                    product?.image_positioning_data[0]?.image_position?.bottom +
+                    "%",
+                  top:
+                    product?.image_positioning_data[0]?.image_position?.top +
+                    "%",
+                  width:
+                    product?.image_positioning_data[0]?.image_position?.width +
+                    "%",
+                  height:
+                    product?.image_positioning_data[0]?.image_position?.height +
+                    "%",
+                }}
               >
                 {brandImage && !openImageBox && (
                   <Draggable
@@ -194,7 +245,9 @@ const ProductDetails = ({ product, personalizationData }) => {
 
           <div>
             <div className="pb-4 border-b">
-              <h4 className="text-[#48db45] text-sm">IN STOCK</h4>
+              <h4 className="text-[#48db45] text-sm">
+                {is_instock && "IN STOCK"}
+              </h4>
               <h2 className="font-extrabold leading-[36px] text-[36px] mt-2">
                 {title}
               </h2>
@@ -215,62 +268,39 @@ const ProductDetails = ({ product, personalizationData }) => {
 
               <div className="flex items-end gap-2 mt-7">
                 <h2 className="text-[#e84040] text-[36px] leading-[36px] font-semibold">
-                  ${price}
+                  ${discount_price || current_price}
                 </h2>
-                {/* <span className="text-sm font-semibold">$9.67</span> */}
+                {discount_price && (
+                  <span className="text-sm font-semibold">
+                    ${current_price}
+                  </span>
+                )}
               </div>
 
               <div>
                 <h4 className="text-base mt-5">Size</h4>
                 <div className="flex items-center flex-wrap gap-4 mt-2">
-                  <button
-                    className={`py-2 px-4 rounded-full border transition-all ${
-                      selectedSize === "s"
-                        ? "text-white bg-black border-black"
-                        : "hover:text-white hover:border-black hover:bg-black"
-                    }`}
-                    onClick={() => setSelectedSize("s")}
-                  >
-                    S
-                  </button>
-                  <button
-                    className={`py-2 px-4 rounded-full border transition-all ${
-                      selectedSize === "m"
-                        ? "text-white bg-black border-black"
-                        : "hover:text-white hover:border-black hover:bg-black"
-                    }`}
-                    onClick={() => setSelectedSize("m")}
-                  >
-                    M
-                  </button>
-                  <button
-                    className={`py-2 px-4 rounded-full border transition-all ${
-                      selectedSize === "l"
-                        ? "text-white bg-black border-black"
-                        : "hover:text-white hover:border-black hover:bg-black"
-                    }`}
-                    onClick={() => setSelectedSize("l")}
-                  >
-                    L
-                  </button>
-                  <button
-                    className={`py-2 px-4 rounded-full border transition-all ${
-                      selectedSize === "xl"
-                        ? "text-white bg-black border-black"
-                        : "hover:text-white hover:border-black hover:bg-black"
-                    }`}
-                    onClick={() => setSelectedSize("xl")}
-                  >
-                    XL
-                  </button>
+                  {sizeData?.map((item) => (
+                    <button
+                      key={item?.id}
+                      className={`py-2 uppercase px-4 rounded-full border transition-all ${
+                        selectedSize === item?.name
+                          ? "text-white bg-black border-black"
+                          : "hover:text-white hover:border-black hover:bg-black"
+                      }`}
+                      onClick={() => setSelectedSize(item?.name)}
+                    >
+                      {item?.name}
+                    </button>
+                  ))}
                 </div>
               </div>
 
               <h4 className="text-base mt-5">Colors</h4>
               <div className="flex items-center flex-wrap gap-4 mt-2">
-                {colored_variations?.map((item) => (
+                {color?.map((item) => (
                   <button
-                    key={item?.id}
+                    key={item?.name}
                     className={`py-2 px-4 rounded-full border transition-all ${
                       activeProductImage === item?.image
                         ? "bg-black border-black text-white"
@@ -285,15 +315,12 @@ const ProductDetails = ({ product, personalizationData }) => {
             </div>
 
             <div className="py-5 border-b">
-              <p>
-                Nostrum ipsa id alias eos. Et iste est qui quaerat.
-                Necessitatibus quibusdam est autem quis nisi.
-              </p>
-
               {personalizationData?.map((item) => {
                 return item?.type === "IMG" ? (
                   <div>
                     <h4 className="text-base mt-10">{item?.title}</h4>
+
+                    <p>{item?.description}</p>
 
                     <div className="p-5 border-2 border-dashed mt-5 flex items-center justify-center flex-wrap gap-4 rounded-3xl">
                       <FiUploadCloud className="text-2xl" />
@@ -375,11 +402,14 @@ const ProductDetails = ({ product, personalizationData }) => {
                       name=""
                       id=""
                       className="w-full border rounded-3xl bg-transparent outline-none p-5"
-                      onChange={(e) => setBrandText(e.target.value)}
+                      onChange={(e) => setActiveProductImage(e.target.value)}
                     >
                       <option value="">Choose an quote</option>
                       {item?.quote?.map((quote) => (
-                        <option key={quote?.id} value={quote?.quote}>
+                        <option
+                          key={quote?.id}
+                          value={quote?.quote_image[0]?.image}
+                        >
                           {quote?.quote}
                         </option>
                       ))}
