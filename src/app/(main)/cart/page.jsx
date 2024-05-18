@@ -1,7 +1,10 @@
 "use client";
 import Breadcumb from "@/components/shared/Breadcumb";
 import Button from "@/components/ui/Button";
+import { createOrder } from "@/http/api";
+import { useAuthStore } from "@/providers/AuthStoreProvider";
 import { useCartStore } from "@/providers/CartStoreProvider";
+import { useMutation } from "@tanstack/react-query";
 
 const CartPage = () => {
   const { cart, updateQuantity } = useCartStore();
@@ -15,13 +18,15 @@ const CartPage = () => {
         <tr>
           <td className="py-6 border-b">
             <img
-              src={product?.item?.image}
+              src={product?.item?.userData?.finalImage}
               alt="product"
               className="w-24 rounded-md"
             />
           </td>
           <td className="py-6 font-medium border-b">{product?.item?.title}</td>
-          <td className="py-6 border-b">${product?.item?.price}</td>
+          <td className="py-6 border-b">
+            ${product?.item?.discount_price || product?.item?.current_price}
+          </td>
           <td className="py-6 border-b">
             <div className="bg-[#EDEEF1] p-1 rounded-full flex items-center gap-2 w-fit">
               <button
@@ -46,12 +51,58 @@ const CartPage = () => {
             </div>
           </td>
           <td className="py-6 border-b">
-            ${Number(product?.item?.price) * Number(product?.qty)}
+            $
+            {Number(
+              product?.item?.discount_price || product?.item?.current_price
+            ) * Number(product?.qty)}
           </td>
         </tr>
       );
     }
   }
+
+  const { token } = useAuthStore();
+
+  // prepare api request
+  const { mutate: createNewOrder, isPending } = useMutation({
+    mutationKey: ["createOrder"],
+    mutationFn: async ({ id, data: orderData }) => {
+      const { data } = await createOrder({
+        id,
+        data: orderData,
+        token,
+      });
+
+      return data;
+    },
+    onSuccess: async (data) => {
+      console.log("order data", data);
+    },
+  });
+
+  const orderHandler = () => {
+    if (cart?.totalQty) {
+      for (let product of Object.values(cart?.items)) {
+        const item = product?.item;
+
+        createNewOrder({
+          id: item?.id,
+          data: {
+            product_item: item?.id,
+            user_personalized_data: {
+              brandText: item?.userData?.brandText,
+              color: item?.userData?.color,
+              size: item?.userData?.size,
+            },
+            user_personalized_images: [
+              item?.userData?.finalImage,
+              item?.userData?.brandImage,
+            ],
+          },
+        });
+      }
+    }
+  };
   return (
     <main>
       <Breadcumb title="Cart" pathnames={["Home", "Cart"]} />
@@ -98,8 +149,11 @@ const CartPage = () => {
               </span>
             </div>
             <div className="mt-5">
-              <Button href="/checkout" className="w-full block text-center">
-                Process to checkout
+              <Button
+                onClick={orderHandler}
+                className="w-full block text-center"
+              >
+                Place Order
               </Button>
             </div>
           </div>

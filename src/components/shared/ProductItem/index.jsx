@@ -8,7 +8,14 @@ import Button from "../../ui/Button";
 import ViewProductImages from "./ViewProductImages";
 
 const ProductItem = ({ product }) => {
-  const { id, price, title, primary_image: image, variations } = product || {};
+  const {
+    id,
+    current_price,
+    discount_price,
+    title,
+    primary_image: image,
+    variations,
+  } = product || {};
 
   const [viewImages, setViewImages] = useState(false);
   return (
@@ -27,7 +34,9 @@ const ProductItem = ({ product }) => {
           <Link href="/products/single-product">
             <h5 className="transition-all hover:text-primary">{title}</h5>
           </Link>
-          <h4 className="text-lg font-semibold">${price}</h4>
+          <h4 className="text-lg font-semibold">
+            ${discount_price || current_price}
+          </h4>
           <div className="mt-7 w-full">
             <Link href={`/products/${id}`}>
               <Button className="w-full" variant="dark">

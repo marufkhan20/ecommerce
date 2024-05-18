@@ -15,19 +15,21 @@ export const createCartStore = (initState = defaultInitState) => {
       set((state) => {
         const cart = state.cart;
 
-        console.log("product from store", product);
-
         if (!cart?.items[product?.id]) {
           cart.items[product?.id] = {
             item: product,
             qty: 1,
           };
           cart.totalQty += 1;
-          cart.totalPrice += Number(product?.price);
+          cart.totalPrice += Number(
+            product?.discount_price || product?.current_price
+          );
         } else {
           cart.items[product?.id].qty += 1;
           cart.totalQty += 1;
-          cart.totalPrice += Number(product?.price);
+          cart.totalPrice += Number(
+            product?.discount_price || product?.current_price
+          );
         }
         // set in local storage
         localStorage.setItem("cart", JSON.stringify(cart));
@@ -41,10 +43,16 @@ export const createCartStore = (initState = defaultInitState) => {
         if (plus) {
           cart.items[id].qty += qty;
           cart.totalQty += qty;
-          cart.totalPrice += Number(cart?.items[id].item?.price);
+          cart.totalPrice += Number(
+            cart?.items[id].item?.discount_price ||
+              cart?.items[id].item?.current_price
+          );
         } else {
           cart.totalQty -= qty;
-          cart.totalPrice -= Number(cart?.items[id].item?.price);
+          cart.totalPrice -= Number(
+            cart?.items[id].item?.discount_price ||
+              cart?.items[id].item?.current_price
+          );
           if (cart.items[id].qty - 1 === 0) {
             delete cart.items[id];
           } else {
